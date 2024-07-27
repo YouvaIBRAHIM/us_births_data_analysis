@@ -1,0 +1,23 @@
+module.exports = {
+  $schema: "http://json.schemastore.org/prettierrc",
+  printWidth: 85,
+  semi: false,
+  endOfLine: "auto",
+  // plugins: [require.resolve("prettier-plugin-organize-imports")],
+  plugins: [require.resolve("@trivago/prettier-plugin-sort-imports")],
+  importOrder: [
+    "^react$",
+    "@mui/material/styles",
+    "@mui/material",
+    "<THIRD_PARTY_MODULES>",
+    "^@src/components/(.*)$",
+    "^@src/hooks/(.*)$",
+    "^@src/store/(.*)$",
+    "^@src/utils/(.*)$",
+    "^@src/types/(.*)$",
+    "^assets/(.*)$",
+    "^[./]",
+  ],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
+}

@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  web:
+    container_name: names-back
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+    volumes:
+      - ./back/:/app
+    depends_on:
+      - db
+    networks:
+      - names-network
+
+  adminer:
+    container_name: names-adminer
+    image: adminer
+    ports:
+      - 8080:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    depends_on:
+      - db
+    networks:
+      - names-network
+
+  db:
+    container_name: names-db
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - names-network
+
+volumes:
+  postgres_data:
+
+networks:
+  names-network:
