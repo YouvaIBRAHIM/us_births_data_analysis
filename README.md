@@ -13,9 +13,11 @@ Dans le terminal:
     - `docker exec -it names-back bash`
 - `make stop` --> arrête les conteuneurs mais persiste la donnée
     - `docker stop names-back names-db`
-- `make kill`--> arrête ET supprime la donnée
+- `make kill` --> arrête ET supprime la donnée
     - `docker compose down -v`
-
+- `make seed` --> lance docker puis alimente la base de données
+    - `docker exec -it names-back python seed.py`
+    
 ## Pour lancer le frontend
 1. `cd front`
 2. `cp .env.example .env` 

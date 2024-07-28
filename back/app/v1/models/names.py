@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String
-
+from sqlalchemy import Column, Integer, String, CHAR
 from database.connect import Base
 
 class Name(Base):
@@ -7,3 +6,5 @@ class Name(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    gender = Column(CHAR)
+    

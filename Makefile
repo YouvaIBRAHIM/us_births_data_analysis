@@ -27,6 +27,9 @@ compose: ## Up docker en mode detache
 back: compose ## Lance docker et active le terminal de fastapi
 	docker exec -it names-back bash
 
+seed: compose ## Lance docker puis alimente la base de données
+	docker exec -it names-back python seed.py
+
 stop: ## Stop les services go_project
 	docker stop names-back names-db
 
