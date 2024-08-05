@@ -1,9 +1,9 @@
 import { Box, Container } from "@mui/system"
-import { TOOLBAR_HEIGTH } from "@src/services/constants.service"
+import { TOOLBAR_HEIGTH } from "@services/constants.service"
 import { Outlet } from "react-router-dom"
 
-import Header from "@src/components/Header/Header"
-import SideBar from "@src/components/SideBar/SideBar"
+import Header from "@components/Header/Header"
+import SideBar from "@components/SideBar/SideBar"
 
 function Layout() {
   return (

@@ -3,3 +3,5 @@ pydantic==2.8.2
 psycopg2==2.9.9
 sqlalchemy==2.0.30
 python-dotenv==1.0.1
+pandas==2.2.2
+tqdm==4.66.5

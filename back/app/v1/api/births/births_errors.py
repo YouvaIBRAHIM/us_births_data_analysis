@@ -3,3 +3,4 @@ class NameNotFound(RuntimeError):
 
 class NameNotCreated(RuntimeError):
     message = 'ERROR_NAME_NOT_CREATED'
+
