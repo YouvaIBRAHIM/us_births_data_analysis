@@ -5,13 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.v1.api import router as router_v1
 
-from database.connect import engine
-from app.v1.models import main as models
 
 load_dotenv()
-
-models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 cors_origins_env = os.environ.get('CORS_ORIGINS')
