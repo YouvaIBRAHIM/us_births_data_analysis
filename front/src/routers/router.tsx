@@ -3,6 +3,7 @@ import Admin from "@src/pages/Admin.page"
 import Home from "@src/pages/Home.page"
 import LoginPage from "@src/pages/Login.page"
 import Profile from "@src/pages/Profile.page"
+import Graphics from "@src/pages/Graphics.page"
 import RegisterPage from "@src/pages/Register.page"
 import { createBrowserRouter } from "react-router-dom"
 
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute roles={["admin", "editor", "player"]}>
             <Profile />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/graphics",
+        element: (
+          <PrivateRoute roles={["admin", "editor", "player"]}>
+            <Graphics />
           </PrivateRoute>
         ),
       },
