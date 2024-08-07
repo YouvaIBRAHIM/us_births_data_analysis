@@ -1,5 +1,5 @@
 import { Button, Typography } from "@mui/material";
-import GraphicBarFrom from "@components/Graphics/GraphicsForm/GraphicBar/GraphicBarFrom"
+import GraphicFormBase from "@components/Graphics/GraphicsForm/GraphicFormBase/GraphicFormBase"
 import { Stack } from "@mui/system";
 import CustomTextField from "@src/components/Inputs/TextField";
 import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicForm.store";
@@ -30,7 +30,7 @@ const fieldOptions = [
       }
 ]
 
-const GraphicFrom = ({ selectedGraphicId }: IGraphics) => {
+const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
     const {form, onFormUpdate} = useGraphicFormStore()
 
     if (!selectedGraphicId) {
@@ -42,9 +42,11 @@ const GraphicFrom = ({ selectedGraphicId }: IGraphics) => {
     const renderForm = (selectedGraphicId: string) => {
         switch (selectedGraphicId) {
             case 'bar':
-                return <GraphicBarFrom />;
+                return <GraphicFormBase />;
             case 'h-bar':
-                return <GraphicBarFrom />;
+                return <GraphicFormBase />;
+            case 'line':
+                return <GraphicFormBase withZAxes />;
             default:
                 return <Typography variant="body2" gutterBottom>Le formulaire n'est pas disponible</Typography>;
         }
@@ -88,4 +90,4 @@ const GraphicFrom = ({ selectedGraphicId }: IGraphics) => {
 }
 
 
-export default GraphicFrom
+export default GraphicsForm

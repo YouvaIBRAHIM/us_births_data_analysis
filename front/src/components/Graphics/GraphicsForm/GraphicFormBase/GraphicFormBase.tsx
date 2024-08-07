@@ -7,7 +7,7 @@ export interface IGraphics{
     selectedGraphicId: string | null
 }
 
-const axesOptions: {
+export const axesOptions: {
   label: string;
   value: string;
 }[] = [
@@ -29,7 +29,7 @@ const axesOptions: {
   }
 ]
 
-const GraphicBarFrom = () => {
+const GraphicFormBase = ({withZAxes}: {withZAxes?: boolean}) => {
     const {form, onFormUpdate} = useGraphicFormStore()
 
     return (
@@ -50,10 +50,21 @@ const GraphicBarFrom = () => {
           options={axesOptions}
           disabledOption={form?.xAxes as string  || ''}
         />
+        {
+          withZAxes &&
+          <CustomSelect
+            id="ZAxeId"
+            label="Axe Z"
+            value={form?.zAxes as string  || ''}
+            onChange={(value: string) => onFormUpdate('zAxes', value)}
+            options={axesOptions}
+            disabledOption={form?.yAxes as string  || ''}
+          />
+        }
         <RefineOptions />
       </Stack>
     )
 }
 
 
-export default GraphicBarFrom
+export default GraphicFormBase

@@ -1,7 +1,7 @@
 import { Grid, Paper } from '@mui/material';
 import { Stack } from '@mui/system';
 import Graphics from '@src/components/Graphics/Graphics';
-import GraphicFrom from '@src/components/Graphics/GraphicsForm/GraphicsForm';
+import GraphicFormBase from '@src/components/Graphics/GraphicsForm/GraphicsForm';
 import SelectGraphics from '@src/components/Graphics/GraphicsTabs/GraphicsTabs';
 import { useGraphics } from '@src/services/hooks/graphics.hook';
 
@@ -23,7 +23,7 @@ export default function GraphicsPage() {
                         padding: 2
                     }}
                 >
-                    <GraphicFrom selectedGraphicId={selectedButtonId} />
+                    <GraphicFormBase selectedGraphicId={selectedButtonId} />
                 </Paper>
             </Grid>
             <Grid item xs={12}>

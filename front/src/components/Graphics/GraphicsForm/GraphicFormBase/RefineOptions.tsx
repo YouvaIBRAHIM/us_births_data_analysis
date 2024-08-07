@@ -4,6 +4,13 @@ import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicFo
 import { useEffect, useState } from "react";
 import { Divider, Stack } from "@mui/material";
 import InputList from "@components/Graphics/GraphicsForm/Inputs/InputList";
+import { axesOptions } from "./GraphicFormBase";
+
+interface IAxes{
+    xAxes: string | null,
+    yAxes: string | null,
+    zAxes: string | null,
+}
 
 const yearsOptions = [
     {
@@ -27,6 +34,21 @@ const namesOptions = [
     }
 ]
 
+const getAxes = (form: IAxes, value: string) => {
+    if (form?.xAxes == value) {
+        return "X"
+    }
+    if (form?.yAxes == value) {
+        return "Y"
+    }
+    if (form?.zAxes == value) {
+        return "Z"
+    }
+}
+
+const getLabel = (value: string) => {
+    return axesOptions.find(opt => opt.value == value)?.label
+}
 const RefineOptions = () => {
     const {form, onFormUpdate, removeKeyForm} = useGraphicFormStore()
     const [selectedYearsOption, setSelectedYearsOption] = useState<"period" | "enum">("period")
@@ -83,9 +105,15 @@ const RefineOptions = () => {
             }
         }
 
+        const formAxes: IAxes = {
+            xAxes: form?.xAxes as string,
+            yAxes: form?.yAxes as string,
+            zAxes: form?.zAxes as string 
+        }
+
         return (
             <Stack flexDirection="column" gap={1} width="100%">
-                <Divider>Options sur le champ Année</Divider>
+                <Divider>Options du champ Année sur l'axe {getAxes(formAxes, "years")}</Divider>
                 <CustomSelect
                     id="yearsOptions"
                     label="Sélectionner par"
@@ -105,7 +133,8 @@ const RefineOptions = () => {
             onFormUpdate("names", values)
         }, [values])
 
-        if (form?.xAxes !== "names" &&
+        if (
+            form?.xAxes !== "names" &&
             form?.yAxes !== "names"
         ) {
             return null
@@ -131,9 +160,15 @@ const RefineOptions = () => {
             }
         }
 
+        const formAxes: IAxes = {
+            xAxes: form?.xAxes as string,
+            yAxes: form?.yAxes as string,
+            zAxes: form?.zAxes as string 
+        }
+        
         return (
             <Stack flexDirection="column" gap={1} width="100%">
-                <Divider>Options sur le champ Prénom</Divider>
+                <Divider>Options du champ Prénom sur l'axe {getAxes(formAxes, "names")}</Divider>
                 <CustomSelect
                     id="namesOptions"
                     label="Sélectionner par"
@@ -145,10 +180,43 @@ const RefineOptions = () => {
             </Stack>
         )
     }
+
+    const renderZAxesOptions = () => {
+        const [values, setValues] = useState<string[]>([])
+
+        useEffect(() => {
+            if (form?.zAxes) {
+                onFormUpdate(form?.zAxes as string, values)
+            }
+        }, [values])
+
+        if (!form?.zAxes) {
+            return null
+        }
+
+        const onAddValue = (value: string) => {
+            if (!values.includes(value)) {
+                setValues([...values, value])
+            }
+        }
+
+        const onRemoveValue = (index: number) => {
+            setValues(values.filter((_, i) => i !== index))
+        }
+        
+        return (
+            <Stack flexDirection="column" gap={1} width="100%">
+                <Divider>Options du champ {getLabel(form.zAxes as string)} sur l'axe Z</Divider>
+                <InputList label={getLabel(form.zAxes as string) ?? 'Axe Z'} values={values} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />
+            </Stack>
+        )
+    }
+
     return (
         <Stack flexDirection="column" gap={2} width="100%">
             {renderYearsOptions()}
             {renderNamesOptions()}
+            {renderZAxesOptions()}
         </Stack>
     )
 }
