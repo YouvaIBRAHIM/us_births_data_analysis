@@ -4,13 +4,9 @@ import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicFo
 import { useEffect, useState } from "react";
 import { Divider, Stack } from "@mui/material";
 import InputList from "@components/Graphics/GraphicsForm/Inputs/InputList";
-import { axesOptions } from "./GraphicFormBase";
+import { axisOptions } from "./GraphicFormBase";
+import { IAxis, IAxisList } from "./GraphicFormBase.types";
 
-interface IAxes{
-    xAxes: string | null,
-    yAxes: string | null,
-    zAxes: string | null,
-}
 
 const yearsOptions = [
     {
@@ -34,189 +30,114 @@ const namesOptions = [
     }
 ]
 
-const getAxes = (form: IAxes, value: string) => {
-    if (form?.xAxes == value) {
-        return "X"
-    }
-    if (form?.yAxes == value) {
-        return "Y"
-    }
-    if (form?.zAxes == value) {
-        return "Z"
-    }
+const getAxis = (axis: string) => {
+    return axis[0].toUpperCase()
 }
 
 const getLabel = (value: string) => {
-    return axesOptions.find(opt => opt.value == value)?.label
+    return axisOptions.find(opt => opt.value == value)?.label
 }
+
 const RefineOptions = () => {
-    const {form, onFormUpdate, removeKeyForm} = useGraphicFormStore()
-    const [selectedYearsOption, setSelectedYearsOption] = useState<"period" | "enum">("period")
-    const [selectedNamesOption, setSelectedNamesOption] = useState<"all" | "enum">("all")
-
-    const onHandlePeriod = (value: [number, number]) => {
-        onFormUpdate('period', value)
+    const { form, onFormUpdate } = useGraphicFormStore()
+    
+    const onHandlePeriod = (form: Record<string, IAxis>, axis: string, value: [number, number]) => {
+        onFormUpdate(axis, {
+            ...form[axis],
+            type: "period",
+            value
+        })
     }
-
-    useEffect(() => {
-        if (selectedYearsOption === "enum") {
-            removeKeyForm("period")
-        } else if (selectedYearsOption === "period") {
-            removeKeyForm("years")
-        }
-    }, [selectedYearsOption])
-
-    useEffect(() => {
-        if (selectedNamesOption === "all") {
-            removeKeyForm("names")
-        }
-    }, [selectedNamesOption])
-
-    const renderYearsOptions = () => {
-        const [values, setValues] = useState<string[]>([])
+    
+    const renderAxisOptions = (
+        axis: keyof IAxisList, 
+        ) => {
+        const tempForm = form as Record<string, IAxis>;
+        const [selectedOption, setSelectedOption] = useState<"all" | "period" | "enum">("enum")
 
         useEffect(() => {
-            onFormUpdate("years", values)
-        }, [values])
+            if (tempForm[axis]) {
+                onFormUpdate(axis, {
+                    ...tempForm[axis],
+                    type: selectedOption,
+                    value: selectedOption === "period" ? [1880, 1890] : selectedOption === "all" ? [] : tempForm[axis].value
+                })
+            }
+        }, [selectedOption])
 
-        if (form?.xAxes !== "years" &&
-            form?.yAxes !== "years"
-        ) {
+        if (!tempForm[axis]) {
             return null
         }
 
         const onAddValue = (value: string) => {
+            const values = tempForm[axis].value as string[]
             if (!values.includes(value)) {
-                setValues([...values, value])
+                onFormUpdate(axis, {
+                    ...tempForm[axis],
+                    type: selectedOption,
+                    value: [...values, value]
+                })
             }
         }
 
         const onRemoveValue = (index: number) => {
-            setValues(values.filter((_, i) => i !== index))
+            const values = tempForm[axis].value as string[]
+            onFormUpdate(axis, {
+                ...tempForm[axis],
+                value: values.filter((_, i) => i !== index)
+            })
         }
 
-        const renderOption = () => {
-            switch (selectedYearsOption) {
-                case "period":
-                    return <CustomSlider label="Période" onHandleChange={onHandlePeriod} value={form?.period as [number, number] ?? [1880, 1881]}/>;
-            
-                case "enum":
-                    return <InputList label="Année" values={values} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />;
+        const renderOptions = () => {
+            if ((axis === 'xAxis' || axis === 'yAxis')) {
+                switch (selectedOption) {
+                    case "period":
+                        return <CustomSlider label={getLabel(tempForm[axis].field) ?? getAxis(axis)} onHandleChange={(val) => onHandlePeriod(tempForm, axis, val)} value={tempForm[axis].value as [number, number] ?? [1880, 1881]} /> ;
+
+                    case "enum":
+                        return <InputList label={getLabel(tempForm[axis].field) ?? getAxis(axis)} values={tempForm[axis].value as string[]} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />;
+                
+                    default:
+                        return null;
+                }
+            } else {
+                return <InputList label={getLabel(tempForm[axis].field) ?? getAxis(axis)} values={tempForm[axis].value as string[]} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />;
             }
         }
 
-        const formAxes: IAxes = {
-            xAxes: form?.xAxes as string,
-            yAxes: form?.yAxes as string,
-            zAxes: form?.zAxes as string 
+        const getSelect = () => {
+            const field = tempForm[axis].field
+            if ((axis === 'xAxis' || axis === 'yAxis') && (field === "years" || field === "names")) {
+                
+                return ( 
+                    <>
+                        <Divider>Options du champ {getLabel(field as string)} sur l'axe {getAxis(axis)}</Divider>  
+                        <CustomSelect
+                            id={`${axis}Options`}
+                            label="Sélectionner par"
+                            value={selectedOption}
+                            onChange={(value) => setSelectedOption(value as "all" | "period" | "enum")}
+                            options={field === "years" ? yearsOptions : namesOptions}
+                        />
+                    </>
+                )
+            }
+            return <Divider>Options du champ {getLabel(field as string)} sur l'axe {getAxis(axis)}</Divider> 
         }
 
         return (
-            <Stack flexDirection="column" gap={1} width="100%">
-                <Divider>Options du champ Année sur l'axe {getAxes(formAxes, "years")}</Divider>
-                <CustomSelect
-                    id="yearsOptions"
-                    label="Sélectionner par"
-                    value={selectedYearsOption}
-                    onChange={(value) => setSelectedYearsOption(value as "period" | "enum")}
-                    options={yearsOptions}
-                />
-                {renderOption()}
-            </Stack>
-        )
-    }
-
-    const renderNamesOptions = () => {
-        const [values, setValues] = useState<string[]>([])
-
-        useEffect(() => {
-            onFormUpdate("names", values)
-        }, [values])
-
-        if (
-            form?.xAxes !== "names" &&
-            form?.yAxes !== "names"
-        ) {
-            return null
-        }
-
-        const onAddValue = (value: string) => {
-            if (!values.includes(value)) {
-                setValues([...values, value])
-            }
-        }
-
-        const onRemoveValue = (index: number) => {
-            setValues(values.filter((_, i) => i !== index))
-        }
-
-        const renderOption = () => {
-            switch (selectedNamesOption) {
-                case "enum":
-                    return <InputList label="Prénom" values={values} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />;
-            
-                case "all":
-                    return null;
-            }
-        }
-
-        const formAxes: IAxes = {
-            xAxes: form?.xAxes as string,
-            yAxes: form?.yAxes as string,
-            zAxes: form?.zAxes as string 
-        }
-        
-        return (
-            <Stack flexDirection="column" gap={1} width="100%">
-                <Divider>Options du champ Prénom sur l'axe {getAxes(formAxes, "names")}</Divider>
-                <CustomSelect
-                    id="namesOptions"
-                    label="Sélectionner par"
-                    value={selectedNamesOption}
-                    onChange={(value) => setSelectedNamesOption(value as "all" | "enum")}
-                    options={namesOptions}
-                />
-                {renderOption()}
-            </Stack>
-        )
-    }
-
-    const renderZAxesOptions = () => {
-        const [values, setValues] = useState<string[]>([])
-
-        useEffect(() => {
-            if (form?.zAxes) {
-                onFormUpdate(form?.zAxes as string, values)
-            }
-        }, [values])
-
-        if (!form?.zAxes) {
-            return null
-        }
-
-        const onAddValue = (value: string) => {
-            if (!values.includes(value)) {
-                setValues([...values, value])
-            }
-        }
-
-        const onRemoveValue = (index: number) => {
-            setValues(values.filter((_, i) => i !== index))
-        }
-        
-        return (
-            <Stack flexDirection="column" gap={1} width="100%">
-                <Divider>Options du champ {getLabel(form.zAxes as string)} sur l'axe Z</Divider>
-                <InputList label={getLabel(form.zAxes as string) ?? 'Axe Z'} values={values} onAddValue={onAddValue} onRemoveValue={onRemoveValue} />
+            <Stack flexDirection="column" gap={2} width="100%">
+                {getSelect()}
+                {renderOptions()}
             </Stack>
         )
     }
 
     return (
         <Stack flexDirection="column" gap={2} width="100%">
-            {renderYearsOptions()}
-            {renderNamesOptions()}
-            {renderZAxesOptions()}
+            {renderAxisOptions('xAxis')}
+            {renderAxisOptions('yAxis')}
+            {renderAxisOptions('zAxis')}
         </Stack>
     )
 }

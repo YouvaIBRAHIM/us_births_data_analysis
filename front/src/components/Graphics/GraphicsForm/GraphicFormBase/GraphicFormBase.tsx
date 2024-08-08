@@ -2,12 +2,14 @@ import { Stack } from "@mui/material"
 import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicForm.store";
 import CustomSelect from "@components/Inputs/Select";
 import RefineOptions from "./RefineOptions";
+import { useEffect } from "react";
+import { IAxis } from "./GraphicFormBase.types";
 
 export interface IGraphics{
     selectedGraphicId: string | null
 }
 
-export const axesOptions: {
+export const axisOptions: {
   label: string;
   value: string;
 }[] = [
@@ -29,36 +31,44 @@ export const axesOptions: {
   }
 ]
 
-const GraphicFormBase = ({withZAxes}: {withZAxes?: boolean}) => {
-    const {form, onFormUpdate} = useGraphicFormStore()
+const GraphicFormBase = ({withZAxis}: {withZAxis?: boolean}) => {
+    const {form, onFormUpdate, removeKeyForm} = useGraphicFormStore()
+
+    useEffect(() => {
+      if (!withZAxis) {
+        removeKeyForm("zAxis")
+      }
+    }, [withZAxis])
+
+    const tempForm = form as Record<string, IAxis>;
 
     return (
       <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
         <CustomSelect
           id="XAxeId"
           label="Axe X"
-          value={form?.xAxes as string || ''}
-          onChange={(value: string) => onFormUpdate('xAxes', value)}
-          options={axesOptions}
-          disabledOption={form?.yAxes as string  || ''}
+          value={tempForm['xAxis']?.field as string ?? ''}
+          onChange={(field: string) => onFormUpdate('xAxis', {field, value: []})}
+          options={axisOptions}
+          disabledOption={tempForm['yAxis']?.field as string ?? ''}
         />
         <CustomSelect
           id="YAxeId"
           label="Axe Y"
-          value={form?.yAxes as string  || ''}
-          onChange={(value: string) => onFormUpdate('yAxes', value)}
-          options={axesOptions}
-          disabledOption={form?.xAxes as string  || ''}
+          value={tempForm['yAxis']?.field as string ?? ''}
+          onChange={(field: string) => onFormUpdate('yAxis', {field, value: []})}
+          options={axisOptions}
+          disabledOption={tempForm['xAxis']?.field as string ?? ''}
         />
         {
-          withZAxes &&
+          withZAxis &&
           <CustomSelect
             id="ZAxeId"
             label="Axe Z"
-            value={form?.zAxes as string  || ''}
-            onChange={(value: string) => onFormUpdate('zAxes', value)}
-            options={axesOptions}
-            disabledOption={form?.yAxes as string  || ''}
+            value={tempForm['zAxis']?.field as string  ?? ''}
+            onChange={(field: string) => onFormUpdate('zAxis', {field, value: []})}
+            options={axisOptions}
+            disabledOption={tempForm['yAxis']?.field as string ?? ''}
           />
         }
         <RefineOptions />

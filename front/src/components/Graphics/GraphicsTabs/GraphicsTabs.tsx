@@ -33,14 +33,6 @@ export const graphicsList: IGraphicsTabsItem[] = [
     }
   },
   {
-    id: "pie",
-    label: "Diagramme en Secteurs",
-    icon: <ChartPie size={24} />,
-    options: {
-      type: 'pie',
-    }
-  },
-  {
     id: "scatter",
     label: "Diagramme de Dispersion",
     icon: <ChartScatter size={24} />,
@@ -48,7 +40,15 @@ export const graphicsList: IGraphicsTabsItem[] = [
       type: 'scatter',
       mode: 'markers',
     }
-  }
+  }, 
+  {
+    id: "pie",
+    label: "Diagramme en Secteurs",
+    icon: <ChartPie size={24} />,
+    options: {
+      type: 'pie',
+    }
+  },
 ]
 
 const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {

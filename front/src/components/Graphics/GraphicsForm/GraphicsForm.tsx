@@ -46,7 +46,11 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
             case 'h-bar':
                 return <GraphicFormBase />;
             case 'line':
-                return <GraphicFormBase withZAxes />;
+                return <GraphicFormBase withZAxis />;
+            case 'scatter':
+                return <GraphicFormBase withZAxis />;
+            case 'pie':
+                return <GraphicFormBase />;
             default:
                 return <Typography variant="body2" gutterBottom>Le formulaire n'est pas disponible</Typography>;
         }

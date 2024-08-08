@@ -41,6 +41,13 @@ export const useGraphics = () => {
             mode: 'lines',
             marker: {color: colors[colorMode].primary.main},
             ...(graphicsList[findGraphicsListIndex('line')]?.options ?? {})
+          },
+          {
+            x: [1, 2, 3, 4],
+            y: [3, 7, 2, 5],
+            mode: 'lines',
+            marker: {color: colors[colorMode].secondary.main},
+            ...(graphicsList[findGraphicsListIndex('line')]?.options ?? {})
           }
       ],
       'scatter': [
