@@ -3,10 +3,10 @@ import MuiDrawer from "@mui/material/Drawer"
 
 import OpenButtonSideBar from "@components/SideBar/OpenButtonSideBar"
 import DrawerContent from "@components/SideBar/SideBarContent/SideBarContent"
-import { HouseSimple, Kanban, PuzzlePiece } from "@phosphor-icons/react"
+import { HouseSimple, Kanban, ChartBar } from "@phosphor-icons/react"
 import { breakpoints, sideBarConst } from "@services/constants.service"
 import { useSideBar } from "@src/stores/sidebar.store"
-import { ISideBarListItem } from "./SideBarListItem/ISideBarListItem"
+import { ISideBarListItem } from "@components/SideBar/SideBarListItem/ISideBarListItem"
 
 const sideBarList: ISideBarListItem[] = [
   {
@@ -14,6 +14,13 @@ const sideBarList: ISideBarListItem[] = [
     label: "Accueil",
     icon: <HouseSimple size={24} />,
     link: "/",
+    roles: ["all"],
+  },
+  {
+    id: "graphics",
+    label: "Graphiques",
+    icon: <ChartBar size={24} />,
+    link: "/graphics",
     roles: ["all"],
   },
   {

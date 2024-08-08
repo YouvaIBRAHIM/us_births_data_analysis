@@ -63,14 +63,14 @@ const Header = () => {
             alignItems="center"
           >
             <Stack>
-              <img
+              {/* <img
                 src='logo-dark.png'
                 alt='GoHub logo'
                 loading="lazy"
                 style={{
                   height: `${TOOLBAR_HEIGTH}rem`
                 }}
-              />
+              /> */}
             </Stack>
             <Stack direction="row" alignItems="center" gap={1}>
               <Typography>
