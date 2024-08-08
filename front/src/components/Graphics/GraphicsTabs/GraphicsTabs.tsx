@@ -53,18 +53,20 @@ export const graphicsList: IGraphicsTabsItem[] = [
 
 const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
   const { isOpen } = useSideBar()
-  const {cleanForm} = useGraphicFormStore()
+  const {onFormUpdate} = useGraphicFormStore()
 
   useEffect(() => {
     onHandleClick(graphicsList[0].id)
+    onFormUpdate('type', graphicsList[0].options.type)
   }, [])
 
   const handleChange = (_: React.SyntheticEvent<Element, Event>, value: any) => {
     onHandleClick(value)
-    if (["pie", "scatter"].includes(value)) {
-      cleanForm()
-    }
+
+    onFormUpdate('type', value)
   }
+
+
   return (
     <Box sx={{ 
       bgcolor: 'background.paper', 
