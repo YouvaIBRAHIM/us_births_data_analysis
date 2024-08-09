@@ -1,14 +1,16 @@
 from fastapi_users import schemas
+import uuid
 
 
-class UserRead(schemas.BaseUser[int]):
-    id: int
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    id: uuid.UUID
     email: str
     first_name: str
     last_name: str
 
     class Config:
         orm_mode = True
+        exclude = {"hashed_password"}
 
 class UserCreate(schemas.BaseUserCreate):
     email: str

@@ -45,7 +45,7 @@ export const useProfile = () => {
         const { first_name, last_name, email } = data
         setUser({
           id: user?.id as number,
-          firstName: first_name,
+          first_name: first_name,
           lastName: last_name,
           email,
         })
@@ -129,7 +129,7 @@ export const useProfile = () => {
     if (user) {
       setProfile({
         // username: username,
-        first_name: user.firstName,
+        first_name: user.first_name,
         last_name: user.lastName,
         email: user.email,
       })

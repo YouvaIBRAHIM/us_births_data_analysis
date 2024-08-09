@@ -45,7 +45,7 @@ const Profile = () => {
               <CardContent sx={{ textAlign: "center" }}>
                 <Avatar sx={{ width: 120, height: 120, margin: "auto" }} />
                 <Typography variant="h4" sx={{ marginTop: 2 }}>
-                  {user?.firstName}
+                  {user?.first_name}
                 </Typography>
                 {/* <Typography variant="h5" sx={{ marginTop: 2 }}>
                   {formatRoles(user.roles)}
@@ -79,7 +79,7 @@ const Profile = () => {
                 /> */}
                 <CustomTextField
                   label="Prénom"
-                  name="firstName"
+                  name="first_name"
                   value={profile.first_name}
                   onChange={(e) => handleProfileChange("first_name", e.target.value)}
                 />

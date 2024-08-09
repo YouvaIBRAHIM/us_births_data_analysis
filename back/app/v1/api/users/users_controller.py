@@ -1,6 +1,9 @@
 from app.v1.api.users.users_service import auth_backend, fastapi_users, current_active_user
 from app.v1.schemas.users import UserCreate, UserRead, UserUpdate
-from fastapi import APIRouter, Depends
+from app.v1.models.users import UserTable
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter(prefix="/users", tags=["v1/users"])
 
@@ -29,5 +32,5 @@ router.include_router(
 )
 
 @router.get("/check")
-def protected_route(user: UserRead = Depends(current_active_user)):
-    return f"Hello, {user.email}"   
+def protected_route(user: UserTable = Depends(current_active_user)):
+    return JSONResponse(content=jsonable_encoder(user), status_code=status.HTTP_200_OK)  

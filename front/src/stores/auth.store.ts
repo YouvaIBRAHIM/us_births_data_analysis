@@ -19,7 +19,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const data = await fetchAccess(user)
       localStorage.setItem("token", data.access_token)
-      await get().initializeAuth()
     } catch (error) {
       throw new Error(error as string);
     }
@@ -27,11 +26,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (user) => {
     try {
       const data = await fetchRegister(user)
-      console.log(data)
       set({ user: {
         email : data.email,
         id: data.id,
-        firstName : data.firstName,
+        first_name : data.first_name,
         lastName : data.lastName
         
       } })

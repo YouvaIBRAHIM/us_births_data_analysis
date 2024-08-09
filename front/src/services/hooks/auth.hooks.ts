@@ -21,7 +21,7 @@ export const useLogin = () => {
   const {mutate: onLogin, isPending} = useMutation({
     mutationFn: () => login(credentials),
     onSuccess: () => {
-      //navigate("/")
+      navigate("/")
     },
     onError: (error) => {
       showSnackBar(error.message, "error")
@@ -54,7 +54,7 @@ export const useLogin = () => {
 // register hook
 export const useRegister = () => {
   const [newUser, setNewUser] = useState<IUserRegister>({
-    firstName: "",
+    first_name: "",
     lastName: "",
     email: "",
     password: "",

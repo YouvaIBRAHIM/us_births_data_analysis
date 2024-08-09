@@ -23,7 +23,7 @@ const Header = () => {
   const menu = useMemo(
     () => ({
       label: "Menu",
-      openIcon: <Avatar sx={{ width: 32, height: 32 }}>{user?.firstName[0].toUpperCase()}</Avatar>,
+      openIcon: <Avatar sx={{ width: 32, height: 32 }}>{user?.first_name[0].toUpperCase()}</Avatar>,
       options: [
         [
           {
@@ -75,8 +75,8 @@ const Header = () => {
             <Stack direction="row" alignItems="center" gap={1}>
               <Typography>
                 {isMobileScreen
-                  ? truncateString(user?.firstName ?? "", 20)
-                  : user?.firstName}
+                  ? truncateString(user?.first_name ?? "", 20)
+                  : user?.first_name}
               </Typography>
               <Menu {...menu} />
             </Stack>

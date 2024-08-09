@@ -31,7 +31,7 @@ export interface AuthCheckResponse {
     //username: string
     email: string
     //roles: IValideUserRoles[]
-    firstName: string
+    first_name: string
     lastName: string
     id: number,
     //score: number
@@ -58,7 +58,7 @@ export interface AuthState {
 }
 
 export interface IUserRegister {
-  firstName: string
+  first_name: string
   lastName: string
   email: string
   password: string

@@ -73,7 +73,7 @@ export async function fetchRegister(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      first_name: user.firstName,
+      first_name: user.first_name,
       last_name: user.lastName,
       email: user.email,
       password: user.password
@@ -89,14 +89,12 @@ export async function fetchRegister(
 }
 
 export async function fetchLogout(): Promise<Response> {
-  // const csrfToken = await getCsrfToken()
-
+  const token = localStorage.getItem('token');
   const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/jwt/logout`, {
     method: "POST",
-    // headers: {
-    //   "X-CSRFToken": csrfToken || "",
-    // },
-    credentials: "include",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
   })
 
   if (!response.ok) {
@@ -108,20 +106,17 @@ export async function fetchLogout(): Promise<Response> {
 
 export async function fetchCheckAuth(): Promise<AuthCheckResponse> {
   const token = localStorage.getItem('token');
-  console.log('TOKEN' + token)
 
   if (!token) {
     throw new Error('No token found');
   }
 
   const response = await fetch(`${BACKEND_BASE_URL}/v1/users/users/me`, {
-    method: 'PATCH',
+    method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
     },
   })
-
-  console.log(response)
 
   if (!response.ok) {
     throw new Error("Network response was not ok")

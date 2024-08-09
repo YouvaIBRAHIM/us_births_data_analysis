@@ -1,12 +1,23 @@
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, DateTime, ForeignKey, String, Integer, func
 from fastapi_users.db import SQLAlchemyBaseUserTable
-from sqlalchemy.ext.declarative import declarative_base
+from fastapi_users_db_sqlalchemy.access_token import (
+    SQLAlchemyBaseAccessTokenTableUUID,
+)
+from database.base import Base
+import fastapi_users_db_sqlalchemy
+import uuid
 
-Base = declarative_base()
 
-class UserTable(Base, SQLAlchemyBaseUserTable):
-    id = Column(Integer, primary_key=True)
+
+class UserTable(SQLAlchemyBaseUserTable, Base):
+    id = Column(fastapi_users_db_sqlalchemy.generics.GUID(), primary_key=True, default=uuid.uuid4)
     email = Column(String)
     first_name = Column(String)
     last_name = Column(String)
+
+    class Config :
+        fields = {"hashed_password": {"exclude": True}}
+
+class AccessToken(SQLAlchemyBaseAccessTokenTableUUID, Base):  
+    pass
