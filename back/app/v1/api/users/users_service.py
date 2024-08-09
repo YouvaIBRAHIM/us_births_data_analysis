@@ -22,6 +22,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserTable, int]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
 
+    print('HERE ' + SECRET)
+
     async def on_after_register(self, user: UserTable, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")
 

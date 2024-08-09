@@ -21,7 +21,7 @@ export const useLogin = () => {
   const {mutate: onLogin, isPending} = useMutation({
     mutationFn: () => login(credentials),
     onSuccess: () => {
-      navigate("/")
+      //navigate("/")
     },
     onError: (error) => {
       showSnackBar(error.message, "error")

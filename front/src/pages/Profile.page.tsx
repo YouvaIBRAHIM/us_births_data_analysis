@@ -45,11 +45,11 @@ const Profile = () => {
               <CardContent sx={{ textAlign: "center" }}>
                 <Avatar sx={{ width: 120, height: 120, margin: "auto" }} />
                 <Typography variant="h4" sx={{ marginTop: 2 }}>
-                  {user?.username}
+                  {user?.firstName}
                 </Typography>
-                <Typography variant="h5" sx={{ marginTop: 2 }}>
+                {/* <Typography variant="h5" sx={{ marginTop: 2 }}>
                   {formatRoles(user.roles)}
-                </Typography>
+                </Typography> */}
                 <Button
                   variant="contained"
                   color="error"
@@ -71,12 +71,12 @@ const Profile = () => {
                 <Typography variant="h6">
                   Mettre à jour les informations personnelles
                 </Typography>
-                <CustomTextField
+                {/* <CustomTextField
                   label="Nom d'utilisateur"
                   name="username"
                   value={profile.username}
                   onChange={(e) => handleProfileChange("username", e.target.value)}
-                />
+                /> */}
                 <CustomTextField
                   label="Prénom"
                   name="firstName"

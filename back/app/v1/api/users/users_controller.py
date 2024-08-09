@@ -1,5 +1,6 @@
-from app.v1.api.users.users_service import auth_backend, fastapi_users
+from app.v1.api.users.users_service import auth_backend, fastapi_users, current_active_user
 from app.v1.schemas.users import UserCreate, UserRead, UserUpdate
+from fastapi import APIRouter, Depends
 
 router = APIRouter(prefix="/users", tags=["v1/users"])
 
@@ -27,4 +28,6 @@ router.include_router(
     tags=["users"],
 )
 
-    
+@router.get("/check")
+def protected_route(user: UserRead = Depends(current_active_user)):
+    return f"Hello, {user.email}"   
