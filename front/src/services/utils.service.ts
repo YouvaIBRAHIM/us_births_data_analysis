@@ -82,8 +82,8 @@ export const stableSort = (
 
 export const checkResponse = async (response: Response): Promise<unknown | void> => {
   const data = await response.json()
-  if (!response.ok) {
-    throw new Error(data.message || "Une erreur est survenue")
+  if (!response.ok) {    
+    throw new Error(data || "Une erreur est survenue")
   }
 
   return data

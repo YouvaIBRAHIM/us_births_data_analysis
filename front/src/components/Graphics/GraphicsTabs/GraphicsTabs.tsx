@@ -53,7 +53,7 @@ export const graphicsList: IGraphicsTabsItem[] = [
 
 const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
   const { isOpen } = useSideBar()
-  const {onFormUpdate} = useGraphicFormStore()
+  const {onFormUpdate, removeKeyForm} = useGraphicFormStore()
 
   useEffect(() => {
     onHandleClick(graphicsList[0].id)
@@ -62,8 +62,16 @@ const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
 
   const handleChange = (_: React.SyntheticEvent<Element, Event>, value: any) => {
     onHandleClick(value)
-
-    onFormUpdate('type', value)
+    
+    const chart = graphicsList.find(graph => graph.id === value)
+    if(chart){
+      onFormUpdate('type', chart.options.type)
+      if(chart.options.orientation){
+        onFormUpdate('orientation', chart.options.orientation)
+      }else{
+        removeKeyForm('orientation')
+      }
+    }
   }
 
 
