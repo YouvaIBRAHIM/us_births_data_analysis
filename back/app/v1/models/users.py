@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, DateTime, ForeignKey, String, Integer, func
+from sqlalchemy import Column, String
 from fastapi_users.db import SQLAlchemyBaseUserTable
 from fastapi_users_db_sqlalchemy.access_token import (
     SQLAlchemyBaseAccessTokenTableUUID,
