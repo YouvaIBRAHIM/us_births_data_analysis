@@ -21,7 +21,7 @@ export const useProfile = () => {
   const navigate = useNavigate()
 
   const [profile, setProfile] = useState<IProfile>({
-    username: "",
+    // username: "",
     first_name: "",
     last_name: "",
     email: "",
@@ -42,14 +42,11 @@ export const useProfile = () => {
     mutationFn: (profile: IProfile) => updateProfile(profile),
     onSuccess: (data) => {
       if (data) {
-        const { first_name, last_name, email, username } = data
+        const { first_name, last_name, email } = data
         setUser({
           id: user?.id as number,
-          score: user?.score as number,
-          roles: user?.roles ?? [],
-          firstName: first_name,
+          first_name: first_name,
           lastName: last_name,
-          username,
           email,
         })
       }
@@ -131,8 +128,8 @@ export const useProfile = () => {
   useEffect(() => {
     if (user) {
       setProfile({
-        username: user.username,
-        first_name: user.firstName,
+        // username: username,
+        first_name: user.first_name,
         last_name: user.lastName,
         email: user.email,
       })

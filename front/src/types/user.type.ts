@@ -27,16 +27,20 @@ export interface IUserList {
 }
 
 export interface AuthCheckResponse {
-  user: {
-    username: string
+
+    //username: string
     email: string
-    roles: IValideUserRoles[]
-    firstName: string
+    //roles: IValideUserRoles[]
+    first_name: string
     lastName: string
     id: number,
-    score: number
-  }
+    //score: number
 }
+
+export interface LoginCheckResponse {
+  access_token: string
+}
+
 export interface ILoginCredentials{
   email: string,
   password: string,
@@ -44,9 +48,9 @@ export interface ILoginCredentials{
 
 export interface AuthState {
   token: string | null
-  user: AuthCheckResponse["user"] | null
+  user: AuthCheckResponse | null
   setToken: (token: string | null) => void
-  setUser: (user: AuthCheckResponse["user"] | null) => void
+  setUser: (user: AuthCheckResponse | null) => void
   login: (credentials: ILoginCredentials) => Promise<void>
   register: (user: IUserRegister) => Promise<void>
   logout: () => Promise<void>
@@ -54,7 +58,7 @@ export interface AuthState {
 }
 
 export interface IUserRegister {
-  firstName: string
+  first_name: string
   lastName: string
   email: string
   password: string
