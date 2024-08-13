@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
-from database.connect import Base
+from database.base import Base
 
 class Year(Base):
     __tablename__ = "years"
@@ -9,3 +9,4 @@ class Year(Base):
     year = Column(Integer)
     
     births = relationship("Birth", back_populates="year")
+

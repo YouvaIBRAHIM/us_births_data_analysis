@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from database.connect import Base
+from database.base import Base
+
 
 class Birth(Base):
     __tablename__ = 'births'
@@ -12,3 +13,4 @@ class Birth(Base):
     year = relationship("Year", back_populates="births")
 
     __table_args__ = (UniqueConstraint('name_id', 'year_id', name='_name_year_uc'),)
+
