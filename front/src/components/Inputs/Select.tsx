@@ -24,7 +24,8 @@ const CustomSelect = ({ id, label, value, onChange, options, disabledOption }: C
                 },
                 width: {
                     xs: "100%",
-                }
+                },
+                flexGrow: 1
             }}
         >
             <InputLabel id={id}>{label}</InputLabel>

@@ -1,22 +1,28 @@
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { TableCellProps } from '@mui/material/TableCell';
+import { TableCell, TableRow } from "@mui/material"
+import TableHead from "@mui/material/TableHead"
+import TableSortLabel from "@mui/material/TableSortLabel"
 
-interface StatsTableHeadProps {
-  StyledTableCell: React.ComponentType<TableCellProps>;
+interface IStatsTableHead {
+  headCells: string[]
 }
-
-const StatsTableHead: React.FC<StatsTableHeadProps> = ({ StyledTableCell }) => {
-
+const StatsTableHead = ({headCells}: IStatsTableHead) => {
 
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-        <StyledTableCell align="right">Calories</StyledTableCell>
-        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-        <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
-        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
+        {headCells.map((headCell, i) => (
+          <TableCell
+            key={i}
+            align={"left"}
+          >
+            <TableSortLabel
+              hideSortIcon
+
+            >
+              {headCell}
+            </TableSortLabel>
+          </TableCell>
+        ))}
       </TableRow>
     </TableHead>
   )

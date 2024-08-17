@@ -4,7 +4,7 @@ import { Stack } from "@mui/system";
 import CustomTextField from "@src/components/Inputs/TextField";
 import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicForm.store";
 import ConditionBuilder from "@src/components/Conditions/Conditions";
-import { Condition } from "@src/components/Conditions/Conditions.types";
+import { ICondition } from "@src/components/Conditions/Conditions.types";
 
 
 export interface IGraphics{
@@ -56,7 +56,7 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
         }
     }
 
-    const onSetConditions = (conditions: Condition[]) => {
+    const onSetConditions = (conditions: ICondition[]) => {
         onFormUpdate("conditions", conditions)
     }
 
@@ -77,7 +77,7 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
                 onChange={(e) => onFormUpdate("title", e.target.value)}
             />
             {renderForm(selectedGraphicId)}
-            <ConditionBuilder fieldOptions={fieldOptions} conditions={form?.conditions as Condition[] ?? []} onSetConditions={onSetConditions} />
+            <ConditionBuilder fieldOptions={fieldOptions} conditions={form?.conditions as ICondition[] ?? []} onSetConditions={onSetConditions} />
             <Stack
                 alignItems="flex-end"
                 marginTop={4}
