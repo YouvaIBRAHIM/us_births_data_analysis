@@ -64,8 +64,8 @@ const Header = () => {
           >
             <Stack>
               {/* <img
-                src='logo-dark.png'
-                alt='GoHub logo'
+                src='logo.png'
+                alt='logo'
                 loading="lazy"
                 style={{
                   height: `${TOOLBAR_HEIGTH}rem`
