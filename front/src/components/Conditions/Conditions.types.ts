@@ -1,4 +1,4 @@
-export interface Condition {
+export interface ICondition {
     field: string;
     condition: string;
     value: string;
@@ -10,6 +10,6 @@ export interface IOption{
 
 export interface IConditionBuilder{
     fieldOptions: IOption[],
-    conditions: Condition[],
-    onSetConditions: (conditions: Condition[]) => void
+    conditions: ICondition[],
+    onSetConditions: (conditions: ICondition[]) => void
 }

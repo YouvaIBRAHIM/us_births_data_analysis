@@ -1,15 +1,13 @@
-import { Button, CircularProgress, Typography } from "@mui/material";
-import GraphicFormBase from "@components/Graphics/GraphicsForm/GraphicFormBase/GraphicFormBase"
+import { Button, CircularProgress } from "@mui/material";
+import FormBase from "@components/StatisticsView/form/FormBase/FormBase"
 import { Stack } from "@mui/system";
 import CustomTextField from "@src/components/Inputs/TextField";
 import ConditionBuilder from "@src/components/Conditions/Conditions";
 import { ICondition } from "@src/components/Conditions/Conditions.types";
-import { useGraphics } from "@src/services/hooks/graphics.hook";
+import { useForm } from "@src/components/StatisticsView/form/Form.hook";
+import FormExamples from "./FormBase/FormExamples";
 
 
-export interface IGraphics{
-    selectedGraphicId: string | null
-}
 
 const fieldOptions = [
     {
@@ -30,60 +28,31 @@ const fieldOptions = [
       }
 ]
 
-const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
+const Form = () => {
     const { 
         form, 
         onFormUpdate, 
         onSubmit,
         onSetConditions,
         isPendingGraphicData,
-    } = useGraphics()
-
-    if (!selectedGraphicId) {
-        return(
-            <Typography variant="body2" gutterBottom>Veuillez sélectioner un graphique</Typography>
-        );
-    }
-
-    const renderForm = (selectedGraphicId: string) => {
-        switch (selectedGraphicId) {
-            case 'bar':
-                return <GraphicFormBase />;
-            case 'h-bar':
-                return <GraphicFormBase />;
-            case 'line':
-                return <GraphicFormBase />;
-            case 'scatter':
-                return <GraphicFormBase />;
-            case 'pie':
-                return <GraphicFormBase />;
-            default:
-                return <Typography variant="body2" gutterBottom>Le formulaire n'est pas disponible</Typography>;
-        }
-    }
-
-    const onSetConditions = (conditions: ICondition[]) => {
-        onFormUpdate("conditions", conditions)
-    }
-
-    const onSubmit = () => {
-        console.log(form);
-    }
+    } = useForm()
 
     return (
         <Stack 
             gap={2}
             flexDirection="column"
         >
+            <FormExamples />
             <CustomTextField 
                 label="Titre"
                 sx={{
                     maxWidth: 350
                 }}
+                value={form.title}
                 onChange={(e) => onFormUpdate("title", e.target.value)}
             />
-            {renderForm(selectedGraphicId)}
-            <ConditionBuilder fieldOptions={fieldOptions} conditions={form?.conditions as ICondition[] ?? []} onSetConditions={onSetConditions} />
+            <FormBase />
+            <ConditionBuilder fieldOptions={fieldOptions} conditions={form.conditions as ICondition[] ?? []} onSetConditions={onSetConditions} />
             <Stack
                 alignItems="flex-end"
                 marginTop={4}
@@ -110,4 +79,4 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
 }
 
 
-export default GraphicsForm
+export default Form

@@ -7,7 +7,7 @@ import Box from "@mui/material/Box"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 
-import UsersListView from "@src/components/UserListView/UserListView"
+import StatsListView from "@src/components/StatisticsView/StatsListView"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -61,7 +61,7 @@ export default function Admin() {
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <UsersListView />
+          <StatsListView />
         </TabPanel>
     </Box>
   )
