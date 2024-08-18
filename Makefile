@@ -27,6 +27,9 @@ compose: ## Up docker en mode detache
 back: compose ## Lance docker et active le terminal de fastapi
 	docker exec -it names-back bash
 
+migration: migration ## Lance la migration de la base de données avec alembic
+	docker exec -it names-back alembic upgrade head
+
 seed: compose ## Lance docker puis alimente la base de données
 	docker exec -it names-back python seed.py
 

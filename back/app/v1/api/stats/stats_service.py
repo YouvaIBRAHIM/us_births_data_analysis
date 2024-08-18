@@ -2,62 +2,111 @@ from typing import List, Optional
 import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from app.v1.api.stats.stats_errors import InvalidConditionFormat, DatabaseConnectionError, DataFrameProcessingError
+from sqlalchemy.orm import aliased
+from sqlalchemy.exc import SQLAlchemyError
+from app.v1.models.births import Birth
+from app.v1.models.names import Name
+from app.v1.models.years import Year
+from app.v1.api.stats.stats_model import StatsModel
+from fastapi.encoders import jsonable_encoder
 
 class StatsService:
+    
     @staticmethod
-    async def get_dataframe(
-        db: Session, 
-        years: Optional[List[int]] = None,
-        names: Optional[List[str]] = None,
-        gender: Optional[str] = None,
-        births_value: Optional[int] = None,
-        births_condition: Optional[str] = None
-    ) -> pd.DataFrame:
-        base_query = """
-        SELECT 
-            y.year AS year, 
-            n.name AS name, 
-            n.gender AS gender,
-            b.births AS nombre
-        FROM 
-            births b
-        INNER JOIN 
-            names n ON b.name_id = n.id
-        INNER JOIN 
-            years y ON b.year_id = y.id
-        WHERE 1=1
-        """
-        
-        if years:
-            placeholders = ', '.join([str(ye) for ye in years])
-            base_query += f" AND y.year IN ({placeholders})"
+    async def get_stats(payload):
+        indexes, columns, years, names, gender, births, conditions = StatsService.extract_payload_info(payload)
 
-        if names:
-            placeholders = ', '.join([f"'{name}'" for name in names])
-            base_query += f" AND n.name IN ({placeholders})"
-        
-        if gender:
-            base_query += f" AND n.gender = '{gender}'"
-        
-        if births_value is not None and births_condition:
-            if births_condition not in ['greater', 'less', 'equal']:
-                raise ValueError("Invalid value for 'births_condition'. Expected 'greater', 'less', or 'equal'.")
-            
-            if births_condition == 'greater':
-                base_query += f" AND b.births > {births_value}"
-            elif births_condition == 'less':
-                base_query += f" AND b.births < {births_value}"
-            elif births_condition == 'equal':
-                base_query += f" AND b.births = {births_value}"
-        
-        base_query += " ORDER BY y.year, n.name, n.gender;"
-        
-        final_query = text(base_query)
+        # Utiliser des alias uniques pour les tables
+        names_alias = aliased(Name, name='n')
+        years_alias = aliased(Year, name='y')
+        births_alias = aliased(Birth, name='b')
 
-        result = await db.execute(final_query)
-        df = pd.DataFrame(result.fetchall(), columns=['year', 'name', 'gender', 'nombre'])
+        conditions = []
+        try:
+            # Obtenir les conditions de filtrage
+            conditions = StatsService.get_conditions(payload, names_alias, years_alias, births_alias)
+        except KeyError as e:
+            raise InvalidConditionFormat()
 
-        if df.empty:
-            raise ValueError("No data found for the specified conditions.")
+        try:
+            # Récupérer les données brutes
+            raw_data = StatsModel.get_data(conditions, names_alias, years_alias)
 
-        return df
+        except SQLAlchemyError:
+            raise DatabaseConnectionError()
+        
+        df = await StatsService.get_dataframe(raw_data)
+        # appliquer à partir d'ici les fonctions sur la dataframe
+
+        return df.to_json()
+
+    @staticmethod
+    async def get_dataframe(raw_data) -> pd.DataFrame:
+        try:
+            df = pd.DataFrame(jsonable_encoder(raw_data))
+            return df
+        except Exception as e:
+            DataFrameProcessingError()
+
+    @staticmethod
+    def extract_payload_info(payload):
+        indexes = payload.get('indexes', ['years'])
+        columns = payload.get('columns', ['names', 'gender', 'births'])
+
+        years = payload.get('years', {})
+        names = payload.get('names', {})
+        gender = payload.get('gender', {})
+        births = payload.get('births', {})
+        conditions = payload.get('conditions', [])
+
+        return indexes, columns, years, names, gender, births, conditions
+
+
+    @staticmethod
+    def get_conditions(payload, names_alias, years_alias, births_alias):
+        conditions = []
+        for condition in payload.get('conditions', []):
+            try:
+                field = condition['field']
+                value = condition['value']
+                cond = condition['condition']
+
+                if field == 'gender':
+                    if cond == "=":
+                        conditions.append(names_alias.gender == value)
+                    elif cond == "LIKE":
+                        conditions.append(names_alias.gender.like(value))
+                elif field == 'names':
+                    if cond == "=":
+                        conditions.append(names_alias.name == value)
+                    elif cond == "LIKE":
+                        conditions.append(names_alias.name.like(value))
+                elif field == 'years':
+                    if cond == "=":
+                        conditions.append(years_alias.year == int(value))
+                    elif cond == ">":
+                        conditions.append(years_alias.year > int(value))
+                    elif cond == ">=":
+                        conditions.append(years_alias.year >= int(value))
+                    elif cond == "<":
+                        conditions.append(years_alias.year < int(value))
+                    elif cond == "<=":
+                        conditions.append(years_alias.year <= int(value))
+                elif field == 'births':
+                    if cond == "=":
+                        conditions.append(births_alias.births == int(value))
+                    elif cond == ">":
+                        conditions.append(births_alias.births > int(value))
+                    elif cond == ">=":
+                        conditions.append(births_alias.births >= int(value))
+                    elif cond == "<":
+                        conditions.append(births_alias.births < int(value))
+                    elif cond == "<=":
+                        conditions.append(births_alias.births <= int(value))
+                else:
+                    raise InvalidConditionFormat()
+            except Exception as e:
+                raise InvalidConditionFormat()
+
+        return conditions
