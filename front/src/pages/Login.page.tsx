@@ -27,8 +27,8 @@ const LoginPage = () => {
       <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <img
-            src={theme.palette.mode === 'dark' ? 'logo-dark.png' : 'logo-light.png'}
-            alt='GoHub logo'
+            src={theme.palette.mode === 'dark' ? 'logo.png' : 'logo.png'}
+            alt='logo'
             loading="lazy"
             height={150}
           />
