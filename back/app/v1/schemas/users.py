@@ -9,7 +9,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     last_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         exclude = {"hashed_password"}
 
 class UserCreate(schemas.BaseUserCreate):

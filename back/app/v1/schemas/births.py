@@ -12,4 +12,4 @@ class Birth(BirthBase):
     year: Year
 
     class Config:
-        orm_mode: True
+        from_attributes : True
