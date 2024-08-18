@@ -54,7 +54,18 @@ const options: IOption[] = [
             condition: '>',
             value: '3000',
           }
-        ]
+        ],
+        aggregations: {
+          years: null,
+          names: null,
+          gender: null,
+          births: 'moan'
+        },
+        limit: 5000,
+        orderBy: {
+            field: "names",
+            order: "asc"
+        }
     }
   }
 ]

@@ -68,7 +68,7 @@ const Header = () => {
                 alt='logo'
                 loading="lazy"
                 style={{
-                  height: `${TOOLBAR_HEIGTH}rem`
+                  height: `${TOOLBAR_HEIGTH - 1}rem`
                 }}
               />
             </Stack>

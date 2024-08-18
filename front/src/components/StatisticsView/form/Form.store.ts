@@ -41,7 +41,15 @@ export const clearForm: IStatsForm = {
         field: "births",
         value: []
     },
-    conditions: []
+    conditions: [],
+    aggregations: {
+        years: null,
+        names: null,
+        gender: null,
+        births: null
+    },
+    limit: null,
+    orderBy:  null,
 }
 
 export const useFormStore: UseBoundStore<StoreApi<IUseFormStore>> = create((set) => ({
