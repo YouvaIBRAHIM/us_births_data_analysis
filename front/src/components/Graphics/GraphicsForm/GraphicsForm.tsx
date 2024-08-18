@@ -62,14 +62,6 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
         }
     }
 
-    const onSetConditions = (conditions: ICondition[]) => {
-        onFormUpdate("conditions", conditions)
-    }
-
-    const onSubmit = () => {
-        console.log(form);
-    }
-
     return (
         <Stack 
             gap={2}

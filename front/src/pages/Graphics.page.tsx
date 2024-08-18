@@ -15,9 +15,6 @@ export default function GraphicsPage() {
     return (    
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <SelectGraphics selectedButtonId={selectedButtonId} onHandleClick={onSelectedButtonId} />
-            </Grid>
-            <Grid item xs={12}>
                 <Paper 
                     sx={{
                         padding: 2
@@ -25,6 +22,9 @@ export default function GraphicsPage() {
                 >
                     <GraphicFormBase selectedGraphicId={selectedButtonId} />
                 </Paper>
+            </Grid>
+            <Grid item xs={12}>
+                <SelectGraphics selectedButtonId={selectedButtonId} onHandleClick={onSelectedButtonId} />
             </Grid>
             <Grid item xs={12}>
                 <Paper 

@@ -24,7 +24,7 @@ const options: IOption[] = [
         indexes: ['years', 'names'],
         columns: ['gender', 'births'],
         years: {
-            type: "enum",
+            type: "period",
             field: "years",
             value: [1996, 2018]
         },
