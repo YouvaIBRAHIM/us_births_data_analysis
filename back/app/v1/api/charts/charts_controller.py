@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, status, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 from app.v1.api.charts.charts_service import ChartsService
 from app.v1.api.charts.charts_errors import (
     NameNotFound, InvalidChartType, UnsupportedYAxisField,
