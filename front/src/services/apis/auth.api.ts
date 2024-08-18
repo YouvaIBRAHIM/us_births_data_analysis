@@ -1,7 +1,9 @@
 import {
   AuthCheckResponse,
+  ILoginCredentials,
   IUserRegister,
   IValideUserRoles,
+  LoginCheckResponse,
 } from "@src/types/user.type"
 import { checkResponse } from "@services/utils.service"
 
@@ -19,7 +21,7 @@ export interface AuthResponse {
 }
 
 export const login = async (loginData: LoginData): Promise<AuthResponse> => {
-  const response = await fetch(`${BACKEND_BASE_URL}/api/token/`, {
+  const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/jwt/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -46,60 +48,53 @@ export async function getCsrfToken(): Promise<string | null> {
   }
 }
 
-export async function fetchAccess(credentials: {  
-  email: string,
-  password: string
-}): Promise<AuthCheckResponse> {
-  const csrfToken = await getCsrfToken()
-  const {email, password} = credentials
+export async function fetchAccess(user: ILoginCredentials): Promise<LoginCheckResponse> {
+  const formData = new FormData();
+  formData.set('username', user.email);
+  formData.set('password', user.password);
   
-  const response = await fetch(`${BACKEND_BASE_URL}/api/login/`, {
+  const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/jwt/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken || "",
-    },
-    body: JSON.stringify({ email, password }),
-    credentials: "include",
+    body: formData,
   })
 
 
-  const { user: loggedUser } = await checkResponse(response) as AuthCheckResponse
-  return { user: loggedUser }
+  const loggedUser = await checkResponse(response) as LoginCheckResponse
+  return loggedUser
 }
 
 export async function fetchRegister(
   user: IUserRegister,
 ): Promise<AuthCheckResponse> {
-  const csrfToken = await getCsrfToken()
 
-  const response = await fetch(`${BACKEND_BASE_URL}/api/register/`, {
+  const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/register/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken || "",
     },
-    body: JSON.stringify(user),
-    credentials: "include",
+    body: JSON.stringify({
+      first_name: user.first_name,
+      last_name: user.lastName,
+      email: user.email,
+      password: user.password
+    }),
   })
 
   if (!response.ok) {
     throw new Error("Network response was not ok")
   }
 
-  const { user: registeredUser } = await checkResponse(response) as AuthCheckResponse
-  return { user: registeredUser }
+  const registeredUser = await checkResponse(response) as AuthCheckResponse
+  return  registeredUser 
 }
 
 export async function fetchLogout(): Promise<Response> {
-  const csrfToken = await getCsrfToken()
-
-  const response = await fetch(`${BACKEND_BASE_URL}/api/logout/`, {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/jwt/logout`, {
     method: "POST",
     headers: {
-      "X-CSRFToken": csrfToken || "",
+      'Authorization': `Bearer ${token}`,
     },
-    credentials: "include",
   })
 
   if (!response.ok) {
@@ -110,15 +105,23 @@ export async function fetchLogout(): Promise<Response> {
 }
 
 export async function fetchCheckAuth(): Promise<AuthCheckResponse> {
-  const response = await fetch(`${BACKEND_BASE_URL}/api/check-auth/`, {
-    method: "GET",
-    credentials: "include",
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  const response = await fetch(`${BACKEND_BASE_URL}/v1/users/users/me`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
   })
 
   if (!response.ok) {
     throw new Error("Network response was not ok")
   }
 
-  const { user: checkedUser } = await response.json()
-  return { user: checkedUser }
+  const checkedUser = await response.json()
+  return checkedUser
 }

@@ -54,7 +54,7 @@ export const useLogin = () => {
 // register hook
 export const useRegister = () => {
   const [newUser, setNewUser] = useState<IUserRegister>({
-    firstName: "",
+    first_name: "",
     lastName: "",
     email: "",
     password: "",

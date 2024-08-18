@@ -1,10 +1,10 @@
-import { Button, Typography } from "@mui/material";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import GraphicFormBase from "@components/Graphics/GraphicsForm/GraphicFormBase/GraphicFormBase"
 import { Stack } from "@mui/system";
 import CustomTextField from "@src/components/Inputs/TextField";
-import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicForm.store";
 import ConditionBuilder from "@src/components/Conditions/Conditions";
 import { ICondition } from "@src/components/Conditions/Conditions.types";
+import { useGraphics } from "@src/services/hooks/graphics.hook";
 
 
 export interface IGraphics{
@@ -31,7 +31,13 @@ const fieldOptions = [
 ]
 
 const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
-    const {form, onFormUpdate} = useGraphicFormStore()
+    const { 
+        form, 
+        onFormUpdate, 
+        onSubmit,
+        onSetConditions,
+        isPendingGraphicData,
+    } = useGraphics()
 
     if (!selectedGraphicId) {
         return(
@@ -46,9 +52,9 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
             case 'h-bar':
                 return <GraphicFormBase />;
             case 'line':
-                return <GraphicFormBase withZAxis />;
+                return <GraphicFormBase />;
             case 'scatter':
-                return <GraphicFormBase withZAxis />;
+                return <GraphicFormBase />;
             case 'pie':
                 return <GraphicFormBase />;
             default:
@@ -85,8 +91,18 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
                 <Button
                     variant="contained" 
                     onClick={onSubmit}
+                    disabled={isPendingGraphicData}
+                    sx={{
+                        minWidth: 150
+                    }}
                 >
-                    Générer
+                    {
+                        !isPendingGraphicData ?
+                        "Générer"
+                        :
+                        <CircularProgress size={24} color="inherit" />
+                    }
+                    
                 </Button>
             </Stack>
         </Stack>

@@ -7,9 +7,10 @@ interface CustomSelectProps {
     onChange: (value: string) => void;
     options: { value: string; label: string }[];
     disabledOption?: string;
+    error?: boolean
 }
 
-const CustomSelect = ({ id, label, value, onChange, options, disabledOption }: CustomSelectProps) => {
+const CustomSelect = ({ id, label, value, onChange, options, disabledOption, error }: CustomSelectProps) => {
     const handleChange = (event: SelectChangeEvent<string>) => {
         onChange(event.target.value as string);
     };
@@ -36,6 +37,7 @@ const CustomSelect = ({ id, label, value, onChange, options, disabledOption }: C
             label={label}
             value={value}
             onChange={handleChange}
+            error={error}
             >
             {
                 options.filter(opt => opt.value !== disabledOption).map((opt, i) => (

@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@public": "/public",
       "@src": "/src",
       "@pages": "/src/pages",
       "@domains": "/src/domains",

@@ -5,7 +5,7 @@ import { graphicsList } from "@components/Graphics/GraphicsTabs/GraphicsTabs";
 import { useGraphicFormStore } from "@components/Graphics/GraphicsForm/GraphicForm.store";
 
 export const useGraphics = () => {
-  const {form} = useGraphicFormStore()
+  const {form, result} = useGraphicFormStore()
 
   const isMobileScreen = useMediaQuery((theme: Theme) =>
       theme.breakpoints.down("sm"),
@@ -17,7 +17,7 @@ export const useGraphics = () => {
       return graphicsList.findIndex(graph => graph.id === id)
   }
 
-  const dataExample: {[key: string]: Plotly.Data[]} = {
+  const dataExample: {[key: string]: unknown} = {
       'bar': [
           {
             x: [1, 2, 3],
@@ -76,7 +76,8 @@ export const useGraphics = () => {
   return {
     isMobileScreen,
     dataExample,
-    form
+    form,
+    result
   }
 }
 

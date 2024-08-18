@@ -26,12 +26,12 @@ export const breakpoints: IBreakPoints = {
 export const colors: ThemeObject = {
     dark: {
         primary: {
-            main: '#ffb703',
+            main: '#0B4678',
         },
         secondary:{
-            main: '#126782'
+            main: '#0B4678'
         },
-        divider: '#9e9e9e',
+        divider: '#0B4678',
         background: {
             default: '#212121',
             paper: '#424242',
@@ -43,14 +43,14 @@ export const colors: ThemeObject = {
     },
     light: {
         primary: {
-            main: '#ffb703',
+            main: '#1976D2',
         },
         secondary:{
             main: '#126782'
         },
         divider: '#9e9e9e',
         background: {
-            default: '#eeeeee',
+            default: '#E1D7CD',
             paper: '#d1d1d1',
         },
         text: {
