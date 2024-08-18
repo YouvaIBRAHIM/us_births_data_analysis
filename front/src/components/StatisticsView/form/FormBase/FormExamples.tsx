@@ -24,7 +24,7 @@ const options: IOption[] = [
         indexes: ['years', 'names'],
         columns: ['gender', 'births'],
         years: {
-            type: "enum",
+            type: "period",
             field: "years",
             value: [1996, 2018]
         },
@@ -54,7 +54,18 @@ const options: IOption[] = [
             condition: '>',
             value: '3000',
           }
-        ]
+        ],
+        aggregations: {
+          years: null,
+          names: null,
+          gender: null,
+          births: 'moan'
+        },
+        limit: 5000,
+        orderBy: {
+            field: "names",
+            order: "asc"
+        }
     }
   }
 ]

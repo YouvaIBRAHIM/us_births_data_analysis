@@ -12,7 +12,18 @@ export interface IStatsForm{
     names: StatsFormOption;
     gender: StatsFormOption;
     births: StatsFormOption;
-    conditions: ICondition[]
+    conditions: ICondition[];
+    aggregations: {
+        years: string | null;
+        names: string | null;
+        gender: string | null;
+        births: string | null;
+    },
+    limit: number | null,
+    orderBy: {
+        field: IStatsFormFields['fields'],
+        order: 'asc' | 'desc'
+    } | null,
 }
 
 export interface IStatsFormFields{

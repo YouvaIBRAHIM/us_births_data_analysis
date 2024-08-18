@@ -90,7 +90,7 @@ const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
           variant="scrollable"
           scrollButtons
           allowScrollButtonsMobile
-          sx={{
+          sx={(theme) => ({
             "& .MuiTabs-flexContainer": {
               justifyContent: 'space-around'
             },
@@ -98,9 +98,10 @@ const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
               display: 'none'
             },
             "& .Mui-selected":{
-              borderBottom: '2px solid'
+              borderBottom: '2px solid',
+              color: theme.palette.secondary.main
             }
-          }}
+          })}
         >
         {
           graphicsList.map((button, i) => (

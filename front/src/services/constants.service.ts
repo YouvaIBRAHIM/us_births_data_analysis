@@ -29,7 +29,7 @@ export const colors: ThemeObject = {
             main: '#0B4678',
         },
         secondary:{
-            main: '#0B4678'
+            main: '#e1d7cd'
         },
         divider: '#0B4678',
         background: {

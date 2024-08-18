@@ -23,7 +23,7 @@ const Header = () => {
   const menu = useMemo(
     () => ({
       label: "Menu",
-      openIcon: <Avatar sx={{ width: 32, height: 32 }}>{user?.first_name[0].toUpperCase()}</Avatar>,
+      openIcon: <Avatar sx={{ width: 32, height: 32 }}>{(user?.first_name ?? 'U')[0].toUpperCase()}</Avatar>,
       options: [
         [
           {
@@ -63,14 +63,14 @@ const Header = () => {
             alignItems="center"
           >
             <Stack>
-              {/* <img
+              <img
                 src='logo.png'
                 alt='logo'
                 loading="lazy"
                 style={{
-                  height: `${TOOLBAR_HEIGTH}rem`
+                  height: `${TOOLBAR_HEIGTH - 1}rem`
                 }}
-              /> */}
+              />
             </Stack>
             <Stack direction="row" alignItems="center" gap={1}>
               <Typography>
