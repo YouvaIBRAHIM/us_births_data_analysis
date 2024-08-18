@@ -11,6 +11,8 @@ import { getTheme } from "@services/theme.service"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider } from "react-router-dom"
 
+import "@services/translation.service"
+
 const queryClient = new QueryClient()
 
 function App() {

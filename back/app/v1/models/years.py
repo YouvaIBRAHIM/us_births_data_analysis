@@ -7,5 +7,6 @@ class Year(Base):
 
     id = Column(Integer, primary_key=True)
     year = Column(Integer)
-
     
+    births = relationship("Birth", back_populates="year")
+

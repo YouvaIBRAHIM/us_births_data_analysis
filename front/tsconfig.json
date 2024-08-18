@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@public/*": ["public/*"],
       "@src/*": ["src/*"],
       "@pages/*": ["src/pages/*"],
       "@domains/*": ["src/domains/*"],

@@ -8,6 +8,7 @@ export interface IGraphicsTabsItem{
   label: string;
   icon?: JSX.Element,
   options: {
+    type: string;
     [key: string]: unknown
   }
 }

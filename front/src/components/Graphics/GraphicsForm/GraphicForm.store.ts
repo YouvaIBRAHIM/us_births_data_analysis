@@ -1,19 +1,29 @@
+import { PlotParams } from "react-plotly.js";
 import { StoreApi, UseBoundStore, create } from "zustand"
 
-interface UseGraphicFormStore {
+export interface IUseGraphicFormStore {
     form: {
         title: string,
         [key: string]: unknown
     };
+    result: {
+        data: PlotParams['data'],
+        layout: {
+            title: string,
+            [key: string]: unknown
+        }
+    } | null;
     onFormUpdate: (key: string, value: unknown) => void;
     cleanForm: () => void;
     removeKeyForm: (key: string) => void;
+    setFormResult: (result: IUseGraphicFormStore['result']) => void;
 }
 
-export const useGraphicFormStore: UseBoundStore<StoreApi<UseGraphicFormStore>> = create((set) => ({
+export const useGraphicFormStore: UseBoundStore<StoreApi<IUseGraphicFormStore>> = create((set) => ({
     form: {
         title: ''
     },
+    result: null,
     onFormUpdate: (key, value) => {
         set((prev) => {
             return {
@@ -44,6 +54,14 @@ export const useGraphicFormStore: UseBoundStore<StoreApi<UseGraphicFormStore>> =
             return {
                 ...prev,
                 form: tempForm
+            }
+        })
+    },
+    setFormResult: (result) => {
+        set((prev) => {
+            return {
+                ...prev,
+                result
             }
         })
     }

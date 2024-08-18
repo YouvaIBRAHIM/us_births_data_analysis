@@ -1,0 +1,13 @@
+{
+    "ERROR_NAME_NOT_FOUND": "Nom non trouvé",
+    "ERROR_NAME_NOT_CREATED": "Nom non créé",
+    "ERROR_DATA_NOT_FOUND": "Données non trouvées",
+    "ERROR_INVALID_CHART_TYPE": "Type de graphique invalide",
+    "ERROR_UNSUPPORTED_YAXIS_FIELD": "Champ Y-axis non supporté",
+    "ERROR_UNSUPPORTED_XAXIS_FIELD": "Champ X-axis non supporté",
+    "ERROR_INVALID_CONDITION_FORMAT": "Format de condition invalide",
+    "ERROR_DATABASE_CONNECTION": "Erreur de connexion à la base de données",
+    "ERROR_DATA_PROCESSING": "Erreur de traitement des données",
+    "ERROR_DATAFRAME_PROCESSING": "Erreur de traitement du DataFrame",
+    "ERROR_FILTER_APPLICATION": "Erreur d'application des filtres"
+}

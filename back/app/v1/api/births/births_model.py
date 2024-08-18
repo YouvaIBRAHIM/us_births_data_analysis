@@ -8,7 +8,7 @@ class BirthsModel():
 
     def get_births():
         try:
-            return db.query(Birth).all()
+            return db.query(Birth).limit(5).all()
         except:
             raise NameNotFound()
 
