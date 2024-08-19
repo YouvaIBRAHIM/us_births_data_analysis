@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 
 interface IStatsTableBody{
-  rows: (string | number)[][]
+  rows: (string | number | null)[][]
 }
 
 const StatsTableBody = ({rows}: IStatsTableBody) => {

@@ -38,7 +38,6 @@ const MoreOptions = () => {
     }
 
     const onSetLimit = (val: string) => {
-      console.log("🚀 ~ onSetLimit ~ val:", val)
       onFormUpdate('limit', val.trim() != "" ? Number(val) : null)
     }
 
@@ -56,7 +55,7 @@ const MoreOptions = () => {
                 label="Ordonner par"
                 value={form.orderBy?.field ?? null}
                 onChange={(val) => onSetOrderBy(val)}
-                options={[{label: 'Non ordonné', value: null},...options]}
+                options={[{label: 'Non ordonné', value: null},...options, {label: 'Naissances', value: 'births'}]}
               />
               <CustomSelect
                 id="order"

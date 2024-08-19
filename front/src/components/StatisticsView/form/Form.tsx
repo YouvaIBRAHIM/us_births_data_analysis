@@ -34,7 +34,7 @@ const Form = () => {
         onFormUpdate, 
         onSubmit,
         onSetConditions,
-        isPendingGraphicData,
+        isPendingStatsData,
     } = useForm()
 
     return (
@@ -60,13 +60,13 @@ const Form = () => {
                 <Button
                     variant="contained" 
                     onClick={onSubmit}
-                    disabled={isPendingGraphicData}
+                    disabled={isPendingStatsData}
                     sx={{
                         minWidth: 150
                     }}
                 >
                     {
-                        !isPendingGraphicData ?
+                        !isPendingStatsData ?
                         "Générer"
                         :
                         <CircularProgress size={24} color="inherit" />

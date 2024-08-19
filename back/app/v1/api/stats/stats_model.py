@@ -10,12 +10,16 @@ db = SessionLocal()
 class StatsModel:
 
     @staticmethod
-    def get_query(conditions, names_alias, years_alias, years, names, gender):
+    def get_query(conditions, names_alias, years_alias, years, names, gender, orderBy, limit):
         try:
             query = StatsModel.build_base_query(conditions, names_alias, years_alias)
             query = StatsModel.apply_field_filters(query, names_alias, years_alias, years)
             query = StatsModel.apply_field_filters(query, names_alias, years_alias, names)
             query = StatsModel.apply_field_filters(query, names_alias, years_alias, gender)
+            query = StatsModel.apply_order(query, orderBy, names_alias, years_alias)
+                        
+            if limit is not None:
+                query = query.limit(limit)
 
             return query
         except NoResultFound:
@@ -72,6 +76,27 @@ class StatsModel:
                 query = query.filter(names_alias.gender.in_(values))
             else:
                 return query
+        except Exception as e:
+            raise FilterApplicationError()
+
+        return query
+    
+    @staticmethod
+    def apply_order(query, orderBy, names_alias, years_alias):
+        try:
+            if orderBy:
+                field = orderBy.get('field')
+                order = orderBy.get('order', 'asc')
+                if field:
+                    if field == 'names':
+                        query = query.order_by(getattr(names_alias, 'name').asc() if order == 'asc' else getattr(names_alias, 'name').desc())
+                    elif field == 'years':
+                        query = query.order_by(getattr(years_alias, 'year').asc() if order == 'asc' else getattr(years_alias, 'year').desc())
+                    elif field == 'gender':
+                        query = query.order_by(getattr(names_alias, 'gender').asc() if order == 'asc' else getattr(names_alias, 'gender').desc())
+                    elif field == 'births':
+                        query = query.order_by(Birth.births.asc() if order == 'asc' else Birth.births.desc())
+
         except Exception as e:
             raise FilterApplicationError()
 
