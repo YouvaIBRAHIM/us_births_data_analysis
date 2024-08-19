@@ -5,13 +5,51 @@ from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/stats", tags=["v1/stats"])
 
-@router.post("/")
+@router.get("/")
 async def get_stats(
     request: Request
 ):
     try:
-        payload = await request.json()
-        
+        # payload = await request.json()
+        payload = {
+            "title": 'Mon formulaire exemple 1',
+            "indexes": [],
+            "columns": ['names', 'gender'],
+            "years": {
+                "type": "period",
+                "field": "years",
+                "value": [1880, 1881]
+            },
+            "names": {
+                "type": "enum",
+                "field": "names",
+                "value": ['Mary', 'Miguel', 'Wood', 'Woodie']
+            },
+            "gender": {
+                "type": "enum",
+                "field": "gender",
+                "value": ['F', 'M']
+            },
+            "births": {
+                "type": "all",
+                "field": "births",
+                "value": []
+            },
+            "conditions": [
+
+            ],
+            "aggregations": {
+                "years": None,
+                "names": None,
+                "gender": None,
+                "births": 'moan'
+            },
+            "limit": 5000,
+            "orderBy": {
+                "field": "names",
+                "order": "asc"
+            }
+        }
         stats = await StatsService.get_stats(payload)
 
         return JSONResponse(content=stats, status_code=status.HTTP_200_OK)

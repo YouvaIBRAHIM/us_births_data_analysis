@@ -10,12 +10,12 @@ from app.v1.models.names import Name
 from app.v1.models.years import Year
 from app.v1.api.stats.stats_model import StatsModel
 from fastapi.encoders import jsonable_encoder
-
+import numpy
 class StatsService:
     
     @staticmethod
     async def get_stats(payload):
-        indexes, columns, years, names, gender, births, conditions = StatsService.extract_payload_info(payload)
+        indexes, columns, years, names, gender, conditions = StatsService.extract_payload_info(payload)
 
         # Utiliser des alias uniques pour les tables
         names_alias = aliased(Name, name='n')
@@ -31,37 +31,43 @@ class StatsService:
 
         try:
             # Récupérer les données brutes
-            raw_data = StatsModel.get_data(conditions, names_alias, years_alias)
+            query = StatsModel.get_query(conditions, names_alias, years_alias, years, names, gender)
 
         except SQLAlchemyError:
             raise DatabaseConnectionError()
-        
-        df = await StatsService.get_dataframe(raw_data)
-        # appliquer à partir d'ici les fonctions sur la dataframe
+        try:
+            df = await StatsService.get_dataframe(query)
+            # appliquer à partir d'ici les fonctions sur la dataframe
+            if(len(indexes) > 0):
+                df = df.pivot_table(index=indexes, columns=columns, values='births', aggfunc='sum')
+            else:
+                if(len(columns) > 0):
+                    df = df.groupby(columns, as_index=False)['births'].sum()
+            print(df)
 
-        return df.to_json()
+            return df.to_json()
+        except Exception as e:
+            print(e)
 
     @staticmethod
-    async def get_dataframe(raw_data) -> pd.DataFrame:
+    async def get_dataframe(query) -> pd.DataFrame:
         try:
-            df = pd.DataFrame(jsonable_encoder(raw_data))
+            df = pd.read_sql(query.statement, query.session.bind)
             return df
         except Exception as e:
             DataFrameProcessingError()
 
     @staticmethod
     def extract_payload_info(payload):
-        indexes = payload.get('indexes', ['years'])
-        columns = payload.get('columns', ['names', 'gender', 'births'])
+        indexes = payload.get('indexes', [])
+        columns = payload.get('columns', ['years', 'names', 'gender', 'births'])
 
         years = payload.get('years', {})
         names = payload.get('names', {})
         gender = payload.get('gender', {})
-        births = payload.get('births', {})
         conditions = payload.get('conditions', [])
 
-        return indexes, columns, years, names, gender, births, conditions
-
+        return indexes, columns, years, names, gender, conditions
 
     @staticmethod
     def get_conditions(payload, names_alias, years_alias, births_alias):
@@ -110,3 +116,4 @@ class StatsService:
                 raise InvalidConditionFormat()
 
         return conditions
+    

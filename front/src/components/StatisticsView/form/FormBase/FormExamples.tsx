@@ -22,7 +22,7 @@ const options: IOption[] = [
     form: {
         title: 'Mon formulaire exemple 1',
         indexes: ['years', 'names'],
-        columns: ['gender', 'births'],
+        columns: ['gender'],
         years: {
             type: "period",
             field: "years",
@@ -37,11 +37,6 @@ const options: IOption[] = [
             type: "enum",
             field: "gender",
             value: ['F', 'M']
-        },
-        births: {
-            type: "all",
-            field: "births",
-            value: []
         },
         conditions: [
           {

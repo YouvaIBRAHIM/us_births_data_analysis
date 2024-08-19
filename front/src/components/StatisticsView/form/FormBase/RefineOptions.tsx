@@ -139,7 +139,6 @@ const RefineOptions = () => {
             {renderAxisOptions('years')}
             {renderAxisOptions('names')}
             {renderAxisOptions('gender')}
-            {renderAxisOptions('births')}
         </Stack>
     )
 }

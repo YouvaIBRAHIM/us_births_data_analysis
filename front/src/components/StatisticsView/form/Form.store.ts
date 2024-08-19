@@ -36,11 +36,6 @@ export const clearForm: IStatsForm = {
         field: "gender",
         value: []
     },
-    births: {
-        type: "all",
-        field: "births",
-        value: []
-    },
     conditions: [],
     aggregations: {
         years: null,

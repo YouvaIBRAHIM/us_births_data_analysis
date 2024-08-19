@@ -48,11 +48,6 @@ export const useForm = () => {
       showSnackBar(errors.columns, "error")
     };
 
-    if (form.indexes.length == 0){
-      errors.indexes = 'Vous devez sélectionner les indexes'
-      showSnackBar(errors.indexes, "error")
-    };
-
     if (title.trim() === "") {
       errors.title = 'Le titre est requis'
       showSnackBar(errors.title, "error")

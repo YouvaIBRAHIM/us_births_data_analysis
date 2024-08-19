@@ -19,10 +19,6 @@ export const options: IAutocompleteValue[] = [
   {
     label: "Genre",
     value: "gender"
-  },
-  {
-    label: "Naissances",
-    value: "births"
   }
 ]
 
