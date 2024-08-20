@@ -11,7 +11,6 @@ export interface IStatsForm{
     };
     names: StatsFormOption;
     gender: StatsFormOption;
-    births: StatsFormOption;
     conditions: ICondition[];
     aggregations: {
         years: string | null;
@@ -27,7 +26,7 @@ export interface IStatsForm{
 }
 
 export interface IStatsFormFields{
-    fields: "years" | "names" | "gender" | "births"
+    fields: "years" | "names" | "gender"
 }
 
 interface StatsFormOption{

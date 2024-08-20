@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useFormStore, IUseFormStore } from "@src/components/StatisticsView/form/Form.store"
 import { ICondition } from "@src/components/Conditions/Conditions.types"
+import { getStatsData } from "@src/services/apis/stats.api"
 
 export const useForm = () => {
   const { showSnackBar } = useSnackBarStore()
@@ -15,8 +16,8 @@ export const useForm = () => {
     setSelectedButtonId(id)
   }
   
-  const {mutate: onSubmitFormMutate, isPending: isPendingGraphicData} = useMutation({
-      mutationFn: (form: IUseFormStore['form'] ) => console.log(form),
+  const {mutate: onSubmitFormMutate, isPending: isPendingStatsData} = useMutation({
+      mutationFn: (form: IUseFormStore['form'] ) => getStatsData(form),
       onSuccess: (data: IUseFormStore['result'] | void) => {
         if (data) {
           setFormResult(data)
@@ -43,15 +44,6 @@ export const useForm = () => {
 
     const title = form.title;
 
-    if (form.columns.length == 0) {
-      errors.columns = 'Vous devez sélectionner les colonnes'
-      showSnackBar(errors.columns, "error")
-    };
-
-    if (form.indexes.length == 0){
-      errors.indexes = 'Vous devez sélectionner les indexes'
-      showSnackBar(errors.indexes, "error")
-    };
 
     if (title.trim() === "") {
       errors.title = 'Le titre est requis'
@@ -66,7 +58,7 @@ export const useForm = () => {
       onFormUpdate, 
       onSubmit,
       onSetConditions,
-      isPendingGraphicData,
+      isPendingStatsData,
       selectedButtonId,
       onSelectedButtonId
   }

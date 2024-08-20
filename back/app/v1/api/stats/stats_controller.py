@@ -11,7 +11,6 @@ async def get_stats(
 ):
     try:
         payload = await request.json()
-        
         stats = await StatsService.get_stats(payload)
 
         return JSONResponse(content=stats, status_code=status.HTTP_200_OK)

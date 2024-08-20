@@ -34,11 +34,23 @@ const options: Record<string, IOption[]> = {
     ...noAggregation,
     {
       label: 'Moyenne',
-      value: 'moan'
+      value: 'mean'
     },
     {
       label: 'Somme',
       value: 'sum'
+    },
+    {
+      label: 'Médiane',
+      value: 'median'
+    },
+    {
+      label: 'Minimum',
+      value: 'min'
+    },
+    {
+      label: 'Maximum',
+      value: 'max'
     }
   ]
 }

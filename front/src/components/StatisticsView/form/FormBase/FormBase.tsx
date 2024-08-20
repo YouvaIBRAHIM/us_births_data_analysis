@@ -19,13 +19,13 @@ export const options: IAutocompleteValue[] = [
   {
     label: "Genre",
     value: "gender"
-  },
-  {
-    label: "Naissances",
-    value: "births"
   }
 ]
 
+const birthsOption: IAutocompleteValue = {
+  label: "Naissances",
+  value: "births"
+}
 
 const FormBase = () => {
     const {form, onFormUpdate} = useFormStore()
@@ -51,7 +51,7 @@ const FormBase = () => {
             maxValues={2}
           />
           <CustomAutocomplete
-            options={options.filter(opt => !form.indexes.includes(opt.value as IStatsFormFields['fields']))}
+            options={[...options, birthsOption].filter(opt => !form.indexes.includes(opt.value as IStatsFormFields['fields']))}
             values={form.columns ?? []}
             onChange={(values: string[]) => onUpdateColumns(values)}
             label="Colonnes"
