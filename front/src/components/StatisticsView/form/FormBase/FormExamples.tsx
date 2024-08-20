@@ -21,15 +21,15 @@ const options: IOption[] = [
     value: 'example-1',
     form: {
         title: 'Mon formulaire exemple 1',
-        indexes: ['years', 'names'],
-        columns: ['gender'],
+        indexes: ['years'],
+        columns: ['gender', 'births'],
         years: {
             type: "period",
             field: "years",
-            value: [1996, 2018]
+            value: [1880, 1881]
         },
         names: {
-            type: "enum",
+            type: "all",
             field: "names",
             value: ['Manon', 'Miguel', 'Youva']
         },
@@ -38,29 +38,15 @@ const options: IOption[] = [
             field: "gender",
             value: ['F', 'M']
         },
-        conditions: [
-          {
-            field: 'names',
-            condition: 'LIKE',
-            value: 'M%',
-          },
-          {
-            field: 'births',
-            condition: '>',
-            value: '3000',
-          }
-        ],
+        conditions: [],
         aggregations: {
           years: null,
           names: null,
           gender: null,
-          births: 'moan'
+          births: 'mean'
         },
-        limit: 5000,
-        orderBy: {
-            field: "names",
-            order: "asc"
-        }
+        limit: null,
+        orderBy: null
     }
   }
 ]

@@ -1,7 +1,4 @@
-from typing import List, Optional
 import pandas as pd
-from sqlalchemy.orm import Session
-from sqlalchemy import text
 from app.v1.api.stats.stats_errors import InvalidConditionFormat, DatabaseConnectionError, DataFrameProcessingError
 from sqlalchemy.orm import aliased
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,10 +6,16 @@ from app.v1.models.births import Birth
 from app.v1.models.names import Name
 from app.v1.models.years import Year
 from app.v1.api.stats.stats_model import StatsModel
-from fastapi.encoders import jsonable_encoder
-import numpy
+
 class StatsService:
-    
+    aggregation_mapper = {
+        'mean': 'Moyenne',
+        'sum': 'Total',
+        'median': 'Médiane',
+        'min': 'Minimum',
+        'max': 'Maximum'
+    }
+
     @staticmethod
     async def get_stats(payload):
         indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy = StatsService.extract_payload_info(payload)
@@ -38,25 +41,25 @@ class StatsService:
         try:
             df = await StatsService.get_dataframe(query)
 
+            columns_without_birth = list(columns)
+
+            if("births" in columns_without_birth):
+                columns_without_birth.remove("births")
 
             if(len(indexes) > 0):
-                df = df.pivot_table(index=indexes, columns=columns, values='births', aggfunc='sum')
+                df = df.pivot_table(index=indexes, columns=columns_without_birth, values='births', aggfunc='sum')
             else:
-                columns_without_birth = list(columns)
-
-                if("births" in columns_without_birth):
-                    columns_without_birth.remove("births")
 
                 if(len(columns_without_birth) > 0):
                     df = df.groupby(columns_without_birth, as_index=False)['births'].sum()
-            
 
             if 'years' in columns and aggregations.get('years') == 'decades':
                 df = StatsService.aggregate_by_decade(df)
             if 'names' in columns and aggregations.get('names') == 'compounds-names':
                 df = StatsService.filter_compound_names(df)
             if 'births' in columns and aggregations.get('births') in ['mean', 'sum', 'median', 'max', 'min']:
-                df = StatsService.add_summary_row(df, aggregations.get('births'))
+                cells = df.columns.tolist() 
+                df = StatsService.add_summary_row(df, aggregations.get('births'), cells)
 
             df = StatsService.clean_dataframe(df)
 
@@ -161,7 +164,34 @@ class StatsService:
         return df
 
     @staticmethod
-    def add_summary_row(df: pd.DataFrame, aggregation_type: str) -> pd.DataFrame:
+    def add_summary_row(df: pd.DataFrame, aggregation_type: str, cells) -> pd.DataFrame:
+        summary_data = {}
+        
+        for column in cells:
+            if(column not in ['years', 'gender', 'names', 'births']):
+                if aggregation_type == 'mean':
+                    summary_data[column] = df[column].mean()
+                elif aggregation_type == 'sum':
+                    summary_data[column] = df[column].sum()
+                elif aggregation_type == 'median':
+                    summary_data[column] = df[column].median()
+                elif aggregation_type == 'min':
+                    summary_data[column] = df[column].min()
+                elif aggregation_type == 'max':
+                    summary_data[column] = df[column].max()
+                else:
+                    raise ValueError(f"Unknown aggregation type: {aggregation_type}")
+                
+                translated_aggregation = StatsService.aggregation_mapper.get(aggregation_type, aggregation_type)
+
+                summary_df = pd.DataFrame(summary_data, index=[translated_aggregation])
+                return pd.concat([df, summary_df], axis=0)
+        if('births' in cells):
+            df = StatsService.add_summary_row_on_birth_column(df, aggregation_type)
+        return df
+
+    @staticmethod
+    def add_summary_row_on_birth_column(df: pd.DataFrame, aggregation_type: str) -> pd.DataFrame:
         if aggregation_type == 'mean':
             mean_value = df['births'].mean()
             summary_df = pd.DataFrame({'births': [mean_value]}, index=['Moyenne'])
@@ -186,10 +216,9 @@ class StatsService:
             max_value = df['births'].max()
             summary_df = pd.DataFrame({'births': [max_value]}, index=['Maximum'])
             return pd.concat([df, summary_df], axis=0)
-        
+
         else:
             return df
-        
 
     @staticmethod
     def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
