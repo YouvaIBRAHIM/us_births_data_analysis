@@ -48,10 +48,14 @@ class StatsService:
 
             if(len(indexes) > 0):
                 df = df.pivot_table(index=indexes, columns=columns_without_birth, values='births', aggfunc='sum')
+
             else:
 
                 if(len(columns_without_birth) > 0):
                     df = df.groupby(columns_without_birth, as_index=False)['births'].sum()
+
+            if 'names' in indexes and aggregations.get('names') in ['proportions']:
+                df = StatsService.calculate_names_proportions(df)
 
             if 'years' in columns and aggregations.get('years') == 'decades':
                 df = StatsService.aggregate_by_decade(df)
@@ -60,6 +64,7 @@ class StatsService:
             if 'births' in columns and aggregations.get('births') in ['mean', 'sum', 'median', 'max', 'min']:
                 cells = df.columns.tolist() 
                 df = StatsService.add_summary_row(df, aggregations.get('births'), cells)
+                
 
             df = StatsService.clean_dataframe(df)
 
@@ -102,7 +107,7 @@ class StatsService:
         orderBy = payload.get('orderBy', None)
 
         return indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy
-
+    
     @staticmethod
     def get_conditions(payload, names_alias, years_alias, births_alias):
         conditions = []
@@ -117,11 +122,24 @@ class StatsService:
                         conditions.append(names_alias.gender == value)
                     elif cond == "LIKE":
                         conditions.append(names_alias.gender.like(value))
+                    elif cond == "IN":
+                        values_list = value.split(',')
+                        conditions.append(names_alias.gender.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(names_alias.gender.op('~')(value))
+                        
                 elif field == 'names':
                     if cond == "=":
                         conditions.append(names_alias.name == value)
                     elif cond == "LIKE":
                         conditions.append(names_alias.name.like(value))
+                    elif cond == "IN":
+                        values_list = value.split(',')
+                        conditions.append(names_alias.name.in_(values_list))
+                    elif cond == "REGEX":
+                        # REGEX des prénoms composés => .*[- ].*
+                        conditions.append(names_alias.name.op('~')(value))
+                        
                 elif field == 'years':
                     if cond == "=":
                         conditions.append(years_alias.year == int(value))
@@ -133,6 +151,12 @@ class StatsService:
                         conditions.append(years_alias.year < int(value))
                     elif cond == "<=":
                         conditions.append(years_alias.year <= int(value))
+                    elif cond == "IN":
+                        values_list = [int(v) for v in value.split(',')]
+                        conditions.append(years_alias.year.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(years_alias.year.op('~')(value))
+                        
                 elif field == 'births':
                     if cond == "=":
                         conditions.append(births_alias.births == int(value))
@@ -144,13 +168,19 @@ class StatsService:
                         conditions.append(births_alias.births < int(value))
                     elif cond == "<=":
                         conditions.append(births_alias.births <= int(value))
+                    elif cond == "IN":
+                        values_list = [int(v) for v in value.split(',')]
+                        conditions.append(births_alias.births.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(births_alias.births.op('~')(value))
+                        
                 else:
                     raise InvalidConditionFormat()
             except Exception as e:
                 raise InvalidConditionFormat()
 
         return conditions
-    
+
     @staticmethod
     def aggregate_by_decade(df: pd.DataFrame) -> pd.DataFrame:
         df['decade'] = (df['years'] // 10) * 10
@@ -167,6 +197,10 @@ class StatsService:
     def add_summary_row(df: pd.DataFrame, aggregation_type: str, cells) -> pd.DataFrame:
         summary_data = {}
         
+        if('births' in cells):
+            df = StatsService.add_summary_row_on_birth_column(df, aggregation_type)
+            return df
+
         for column in cells:
             if(column not in ['years', 'gender', 'names', 'births']):
                 if aggregation_type == 'mean':
@@ -185,10 +219,8 @@ class StatsService:
                 translated_aggregation = StatsService.aggregation_mapper.get(aggregation_type, aggregation_type)
 
                 summary_df = pd.DataFrame(summary_data, index=[translated_aggregation])
-                return pd.concat([df, summary_df], axis=0)
-        if('births' in cells):
-            df = StatsService.add_summary_row_on_birth_column(df, aggregation_type)
-        return df
+        
+        return pd.concat([df, summary_df], axis=0)
 
     @staticmethod
     def add_summary_row_on_birth_column(df: pd.DataFrame, aggregation_type: str) -> pd.DataFrame:
@@ -227,4 +259,12 @@ class StatsService:
         # Remplacer les valeurs infinies par un indicateur de chaîne
         df.replace([float('inf'), -float('inf')], None, inplace=True)
 
+        return df
+
+    @staticmethod
+    def calculate_names_proportions(df: pd.DataFrame) -> pd.DataFrame:
+        total_births = df.sum(axis=1)
+        
+        df['proportions'] = (total_births / total_births.sum()) * 100
+        
         return df
