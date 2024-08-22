@@ -57,14 +57,18 @@ class StatsService:
             if 'names' in indexes and aggregations.get('names') in ['proportions']:
                 df = StatsService.calculate_names_proportions(df)
 
-            if 'years' in columns and aggregations.get('years') == 'decades':
-                df = StatsService.aggregate_by_decade(df)
+            if 'years' in indexes and aggregations.get('years') == 'decades':
+                df = StatsService.aggregate_by_decade(df, indexes)
+
+            if 'gender' in columns and aggregations.get('gender') in ['proportions']:
+                df = StatsService.calculate_gender_proportions(df)
+
             if 'names' in columns and aggregations.get('names') == 'compounds-names':
                 df = StatsService.filter_compound_names(df)
             if 'births' in columns and aggregations.get('births') in ['mean', 'sum', 'median', 'max', 'min']:
                 cells = df.columns.tolist() 
                 df = StatsService.add_summary_row(df, aggregations.get('births'), cells)
-                
+
 
             df = StatsService.clean_dataframe(df)
 
@@ -107,84 +111,33 @@ class StatsService:
         orderBy = payload.get('orderBy', None)
 
         return indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy
-    
-    @staticmethod
-    def get_conditions(payload, names_alias, years_alias, births_alias):
-        conditions = []
-        for condition in payload.get('conditions', []):
-            try:
-                field = condition['field']
-                value = condition['value']
-                cond = condition['condition']
-
-                if field == 'gender':
-                    if cond == "=":
-                        conditions.append(names_alias.gender == value)
-                    elif cond == "LIKE":
-                        conditions.append(names_alias.gender.like(value))
-                    elif cond == "IN":
-                        values_list = value.split(',')
-                        conditions.append(names_alias.gender.in_(values_list))
-                    elif cond == "REGEX":
-                        conditions.append(names_alias.gender.op('~')(value))
-                        
-                elif field == 'names':
-                    if cond == "=":
-                        conditions.append(names_alias.name == value)
-                    elif cond == "LIKE":
-                        conditions.append(names_alias.name.like(value))
-                    elif cond == "IN":
-                        values_list = value.split(',')
-                        conditions.append(names_alias.name.in_(values_list))
-                    elif cond == "REGEX":
-                        # REGEX des prénoms composés => .*[- ].*
-                        conditions.append(names_alias.name.op('~')(value))
-                        
-                elif field == 'years':
-                    if cond == "=":
-                        conditions.append(years_alias.year == int(value))
-                    elif cond == ">":
-                        conditions.append(years_alias.year > int(value))
-                    elif cond == ">=":
-                        conditions.append(years_alias.year >= int(value))
-                    elif cond == "<":
-                        conditions.append(years_alias.year < int(value))
-                    elif cond == "<=":
-                        conditions.append(years_alias.year <= int(value))
-                    elif cond == "IN":
-                        values_list = [int(v) for v in value.split(',')]
-                        conditions.append(years_alias.year.in_(values_list))
-                    elif cond == "REGEX":
-                        conditions.append(years_alias.year.op('~')(value))
-                        
-                elif field == 'births':
-                    if cond == "=":
-                        conditions.append(births_alias.births == int(value))
-                    elif cond == ">":
-                        conditions.append(births_alias.births > int(value))
-                    elif cond == ">=":
-                        conditions.append(births_alias.births >= int(value))
-                    elif cond == "<":
-                        conditions.append(births_alias.births < int(value))
-                    elif cond == "<=":
-                        conditions.append(births_alias.births <= int(value))
-                    elif cond == "IN":
-                        values_list = [int(v) for v in value.split(',')]
-                        conditions.append(births_alias.births.in_(values_list))
-                    elif cond == "REGEX":
-                        conditions.append(births_alias.births.op('~')(value))
-                        
-                else:
-                    raise InvalidConditionFormat()
-            except Exception as e:
-                raise InvalidConditionFormat()
-
-        return conditions
 
     @staticmethod
-    def aggregate_by_decade(df: pd.DataFrame) -> pd.DataFrame:
-        df['decade'] = (df['years'] // 10) * 10
-        return df.groupby('decade', as_index=False)['births'].sum()
+    def aggregate_by_decade(df: pd.DataFrame, indexes: list) -> pd.DataFrame:
+        # Déterminer l'emplacement de 'years' dans l'index
+        year_index = None
+        for i, idx_name in enumerate(df.index.names):
+            if idx_name in indexes and idx_name == 'years':
+                year_index = i
+                break
+        
+        if year_index is None:
+            raise ValueError("'years' not found in index or indexes list.")
+
+        # Extraire les années à partir du multi-index
+        years = df.index.get_level_values(year_index)
+        
+        # Créer une colonne 'decade' en fonction des années
+        df['decade'] = (years // 10) * 10
+
+        df_reset = df.reset_index()
+
+        df_decade = df_reset.groupby('decade').sum()
+        
+        df_decade.drop(columns='decade', errors='ignore', inplace=True)
+        df_decade.drop(columns='years', errors='ignore', inplace=True)
+
+        return df_decade
 
     @staticmethod
     def filter_compound_names(df: pd.DataFrame) -> pd.DataFrame:
@@ -265,6 +218,96 @@ class StatsService:
     def calculate_names_proportions(df: pd.DataFrame) -> pd.DataFrame:
         total_births = df.sum(axis=1)
         
-        df['proportions'] = (total_births / total_births.sum()) * 100
+        df['proportions'] = ((total_births / total_births.sum()) * 100).round(2)
         
         return df
+    
+    @staticmethod
+    def calculate_gender_proportions(df: pd.DataFrame) -> pd.DataFrame:
+        # Calcul du total des naissances par ligne (année, par exemple)
+        total_births_per_row = df.sum(axis=1)
+        
+        # Calcul du total des naissances sur l'ensemble des lignes et des colonnes
+        total_births_overall = total_births_per_row.sum()
+        
+        # Calcul des proportions pour chaque genre (chaque colonne représente un genre)
+        for column in df.columns:
+            df[column + '_proportion'] = ((df[column] / total_births_per_row) * 100).round(2)
+        
+        # Ajout de la colonne 'proportion_total' pour représenter la proportion sur l'ensemble
+        df['proportion_total'] = ((total_births_per_row / total_births_overall) * 100).round(2)
+        
+        return df
+        
+    @staticmethod
+    def get_conditions(payload, names_alias, years_alias, births_alias):
+        conditions = []
+        for condition in payload.get('conditions', []):
+            try:
+                field = condition['field']
+                value = condition['value']
+                cond = condition['condition']
+
+                if field == 'gender':
+                    if cond == "=":
+                        conditions.append(names_alias.gender == value)
+                    elif cond == "LIKE":
+                        conditions.append(names_alias.gender.like(value))
+                    elif cond == "IN":
+                        values_list = value.split(',')
+                        conditions.append(names_alias.gender.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(names_alias.gender.op('~')(value))
+                        
+                elif field == 'names':
+                    if cond == "=":
+                        conditions.append(names_alias.name == value)
+                    elif cond == "LIKE":
+                        conditions.append(names_alias.name.like(value))
+                    elif cond == "IN":
+                        values_list = value.split(',')
+                        conditions.append(names_alias.name.in_(values_list))
+                    elif cond == "REGEX":
+                        # REGEX des prénoms composés => .*[- ].*
+                        conditions.append(names_alias.name.op('~')(value))
+                        
+                elif field == 'years':
+                    if cond == "=":
+                        conditions.append(years_alias.year == int(value))
+                    elif cond == ">":
+                        conditions.append(years_alias.year > int(value))
+                    elif cond == ">=":
+                        conditions.append(years_alias.year >= int(value))
+                    elif cond == "<":
+                        conditions.append(years_alias.year < int(value))
+                    elif cond == "<=":
+                        conditions.append(years_alias.year <= int(value))
+                    elif cond == "IN":
+                        values_list = [int(v) for v in value.split(',')]
+                        conditions.append(years_alias.year.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(years_alias.year.op('~')(value))
+                        
+                elif field == 'births':
+                    if cond == "=":
+                        conditions.append(births_alias.births == int(value))
+                    elif cond == ">":
+                        conditions.append(births_alias.births > int(value))
+                    elif cond == ">=":
+                        conditions.append(births_alias.births >= int(value))
+                    elif cond == "<":
+                        conditions.append(births_alias.births < int(value))
+                    elif cond == "<=":
+                        conditions.append(births_alias.births <= int(value))
+                    elif cond == "IN":
+                        values_list = [int(v) for v in value.split(',')]
+                        conditions.append(births_alias.births.in_(values_list))
+                    elif cond == "REGEX":
+                        conditions.append(births_alias.births.op('~')(value))
+                        
+                else:
+                    raise InvalidConditionFormat()
+            except Exception as e:
+                raise InvalidConditionFormat()
+
+        return conditions

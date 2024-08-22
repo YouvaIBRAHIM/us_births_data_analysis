@@ -55,7 +55,7 @@ const MoreOptions = () => {
                 label="Ordonner par"
                 value={form.orderBy?.field ?? null}
                 onChange={(val) => onSetOrderBy(val)}
-                options={[{label: 'Non ordonné', value: null},...options, {label: 'Naissances', value: 'births'}]}
+                options={[{label: 'Non ordonné', value: null},...options]}
               />
               <CustomSelect
                 id="order"
