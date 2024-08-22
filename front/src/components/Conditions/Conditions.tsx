@@ -1,5 +1,5 @@
 import { Button, Grid, Stack, Divider, IconButton, Typography } from '@mui/material';
-import { Condition, IConditionBuilder, IOption } from './Conditions.types';
+import { ICondition, IConditionBuilder, IOption } from './Conditions.types';
 import { Trash } from '@phosphor-icons/react';
 import CustomSelect from '../Inputs/Select';
 import CustomTextField from '../Inputs/TextField';
@@ -11,6 +11,8 @@ const conditionOptions: IOption[] = [
     { value: '<', label: 'Inférieur(<)' },
     { value: '<=', label: 'Inférieur ou égal (<=)' },
     { value: 'LIKE', label: 'Like' },
+    { value: 'IN', label: 'Dans (IN)' },
+    { value: 'REGEX', label: 'Expression régulière (REGEX)' },
 ];
 
 const ConditionBuilder = ({fieldOptions, conditions, onSetConditions}: IConditionBuilder) => {
@@ -19,7 +21,7 @@ const ConditionBuilder = ({fieldOptions, conditions, onSetConditions}: IConditio
         onSetConditions([...conditions, { field: fieldOptions[0].value, condition: conditionOptions[0].value, value: '' }]);
     };
 
-    const handleConditionChange = (index: number, key: keyof Condition, value: string) => {
+    const handleConditionChange = (index: number, key: keyof ICondition, value: string) => {
         const newConditions = conditions.map((condition, i) =>
         i === index ? { ...condition, [key]: value } : condition
         );

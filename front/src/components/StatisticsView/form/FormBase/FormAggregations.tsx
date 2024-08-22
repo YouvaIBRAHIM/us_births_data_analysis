@@ -12,14 +12,7 @@ const noAggregation: IOption[] = [{
   label: 'Aucune fonction d\'aggrégation',
   value: null
 }]
-const options: Record<string, IOption[]> = {
-  'years': [
-    ...noAggregation,
-    {
-      label: 'Par décennies',
-      value: 'decades'
-    }
-  ],
+const colOptions: Record<string, IOption[]> = {
   'names': [
     ...noAggregation,
     {
@@ -28,7 +21,11 @@ const options: Record<string, IOption[]> = {
     }
   ],
   'gender': [
-    ...noAggregation
+    ...noAggregation,
+    {
+      label: 'Proportions',
+      value: 'proportions'
+    }
   ],
   'births': [
     ...noAggregation,
@@ -55,6 +52,27 @@ const options: Record<string, IOption[]> = {
   ]
 }
 
+const indexOptions: Record<string, IOption[]> = {
+  'years': [
+    ...noAggregation,
+    {
+      label: 'Par décennies',
+      value: 'decades'
+    }
+  ],
+  'names': [
+    ...noAggregation,
+    {
+      label: 'Prénoms composés',
+      value: 'compounds-names'
+    },
+    {
+      label: 'Proportions',
+      value: 'proportions'
+    }
+  ]
+}
+
 const getLabel = (value: string) => {
   return fieldOptions.find(opt => opt.value == value)?.label
 }
@@ -69,43 +87,92 @@ const FormAggregations = () => {
       })
     }
 
-    if (form.columns.length === 0) {
+    if (form.columns.length === 0 && form.indexes.length === 0) {
       return null
     }
-
+    
     return (
-      <Stack width={'100%'} flexGrow={1} flex={2} gap={2} flexDirection="column" alignItems="flex-end">
+      <Stack width={'100%'} flexGrow={1} flex={2} gap={2} flexDirection="column">
           <Divider 
             sx={{
               width: '100%'
             }}
           >Aggrégations</Divider>
-            {
-              form.columns.map((col, i) => (
-                <Stack 
-                  key={i} 
-                  direction="row" 
-                  alignItems="center" 
-                  flexWrap="wrap" 
-                  gap={2} 
-                  sx={{
-                    width: {
-                      xs: '100%',
-                      sm: '50%',
-                    }
-                  }}
-                >
-                  <Typography variant="body2">{getLabel(col)}</Typography>
-                  <CustomSelect
-                    id="aggregations"
-                    label="Fonction d'aggrégation"
-                    value={form.aggregations[col]}
-                    onChange={(val) => onSetSelectedExample(val, col)}
-                    options={options[col] ?? []}
-                  />
-                </Stack>
-              ))
-            }
+          <Stack 
+            flexDirection='row'
+            width={'100%'}
+            gap={4}
+            justifyContent='space-between'
+          >
+            <Stack
+              width={'100%'}
+              flexDirection="column"
+              alignSelf="flex-start"
+              gap={2}
+            >
+              {
+                form.indexes.map((index, i) => (
+                  indexOptions[index] && (
+                    <Stack 
+                      key={i} 
+                      direction="row" 
+                      alignItems="center" 
+                      flexWrap="wrap" 
+                      gap={2} 
+                      sx={{
+                        width: {
+                          xs: '100%',
+                        }
+                      }}
+                    >
+                      <Typography variant="body2">{getLabel(index)}</Typography>
+                      <CustomSelect
+                        id="aggregations"
+                        label="Fonction d'aggrégation"
+                        value={form.aggregations[index]}
+                        onChange={(val) => onSetSelectedExample(val, index)}
+                        options={indexOptions[index] ?? []}
+                      />
+                    </Stack>
+                  )
+                ))
+              }
+            </Stack>
+            <Stack
+              width={'100%'}
+              flexDirection="column"
+              alignSelf="flex-end"
+              gap={2}
+            >
+              {
+                form.columns.map((col, i) => (
+                  colOptions[col] && (
+                    <Stack 
+                      key={i} 
+                      direction="row" 
+                      alignItems="center" 
+                      flexWrap="wrap" 
+                      gap={2} 
+                      sx={{
+                        width: {
+                          xs: '100%',
+                        }
+                      }}
+                    >
+                      <Typography variant="body2">{getLabel(col)}</Typography>
+                      <CustomSelect
+                        id="aggregations"
+                        label="Fonction d'aggrégation"
+                        value={form.aggregations[col]}
+                        onChange={(val) => onSetSelectedExample(val, col)}
+                        options={colOptions[col] ?? []}
+                      />
+                    </Stack>
+                  )
+                ))
+              }
+            </Stack>
+          </Stack>
       </Stack>
     )
 }
