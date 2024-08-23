@@ -24,6 +24,9 @@ class ChartsModel:
                 return ChartsModel.generate_pie_chart(query, yAxis, names_alias, years_alias)
             elif chart_type == 'scatter':
                 return ChartsModel.generate_scatter_plot(query, xAxis, names_alias, years_alias)
+            elif chart_type == 'heat':
+
+                return ChartsModel.generate_heatmap(query, names_alias, years_alias)
             else:
                 raise InvalidChartType()
 
@@ -167,3 +170,20 @@ class ChartsModel:
             return query.all()
         except Exception as e:
             raise DataProcessingError()
+        
+    @staticmethod
+    def generate_heatmap(query, names_alias, years_alias):
+        try:
+            # Récupérer l'année, le nom et le total des naissances
+            query = query.with_entities(
+                years_alias.year,
+                names_alias.name,
+                func.sum(Birth.births).label('Total des naissances')
+            ).group_by(years_alias.year, names_alias.name)
+            query = query.order_by(years_alias.year, names_alias.name)
+            return query.all()
+        except Exception as e:
+            raise DataProcessingError()
+
+
+

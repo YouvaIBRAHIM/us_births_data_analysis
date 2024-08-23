@@ -57,6 +57,8 @@ const GraphicsForm = ({ selectedGraphicId }: IGraphics) => {
                 return <GraphicFormBase />;
             case 'pie':
                 return <GraphicFormBase />;
+            case 'heat':
+                return <GraphicFormBase />;    
             default:
                 return <Typography variant="body2" gutterBottom>Le formulaire n'est pas disponible</Typography>;
         }

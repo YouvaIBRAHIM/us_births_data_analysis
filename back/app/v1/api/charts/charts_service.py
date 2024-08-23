@@ -1,3 +1,4 @@
+from sqlalchemy import Null, null
 from app.v1.api.charts.charts_model import ChartsModel
 from app.v1.api.charts.charts_errors import (
     DataNotFound, InvalidChartType, InvalidConditionFormat, 
@@ -20,7 +21,7 @@ class ChartsService:
         names_alias = aliased(Name, name='n')
         years_alias = aliased(Year, name='y')
         births_alias = aliased(Birth, name='b')
-        
+  
         conditions = []
         try:
             # Obtenir les conditions de filtrage
@@ -37,7 +38,6 @@ class ChartsService:
         # Vérifier si les données existent
         if not raw_data:
             raise DataNotFound()
-        
         # Formater les données en fonction du type de graphique
         return ChartsService.format_chart_data(raw_data, xAxis, yAxis, chart_type, payload)
 
@@ -68,6 +68,8 @@ class ChartsService:
                 data = ChartsService.format_pie_chart(df, xAxis, yAxis)
             elif chart_type == 'scatter':
                 data = ChartsService.format_scatter_chart(df, xAxis, yAxis)
+            elif chart_type == 'heat':
+                data = ChartsService.format_heatmap(df)
             else:
                 raise InvalidChartType()
         except ValueError as e:
@@ -199,3 +201,20 @@ class ChartsService:
                 raise InvalidConditionFormat()
 
         return conditions
+    
+    @staticmethod
+    def format_heatmap(df):
+        try:
+            pivot_df = df.pivot(index='years', columns='names', values='Total des naissances').fillna(0)
+
+            data = [{
+                'z': pivot_df.values.tolist(),
+                'x': pivot_df.index.tolist(),
+                'y': pivot_df.columns.tolist(),
+                'type': 'heatmap'
+            }]
+        except Exception as e:
+            raise DataProcessingError()
+
+        return data
+

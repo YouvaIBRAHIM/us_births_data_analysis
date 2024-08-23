@@ -71,6 +71,15 @@ export const useGraphics = () => {
             ...(graphicsList[findGraphicsListIndex('pie')]?.options ?? {})
           }
       ],
+      'heat': [
+          {
+            z: [[2000, 100, 6687, 8780, 3960], [3140, 4560, 1014, 2000, 2897]],
+            x: ['1980', '1981', '1982', '1983', '1984'],
+            y: ['Youva', 'Manon'],
+            hoverongaps: false,
+            type: 'heatmap',
+          }
+      ],
   }
 
   return {

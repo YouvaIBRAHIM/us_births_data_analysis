@@ -1,4 +1,4 @@
-import { ChartBar, ChartBarHorizontal, ChartLine, ChartPie, ChartScatter } from "@phosphor-icons/react"
+import { ChartBar, ChartBarHorizontal, ChartLine, ChartPie, ChartScatter, SquaresFour } from "@phosphor-icons/react"
 import { IGraphicsTabsItem, IGraphicsTabs } from '@src/components/Graphics/GraphicsTabs/IGraphicsTabs'
 import { Box, Tab, Tabs } from "@mui/material"
 import { useSideBar } from "@src/stores/sidebar.store"
@@ -47,6 +47,14 @@ export const graphicsList: IGraphicsTabsItem[] = [
     icon: <ChartPie size={24} />,
     options: {
       type: 'pie',
+    }
+  },
+  {
+    id: "heat",
+    label: "Diagramme de diversité",
+    icon: <SquaresFour size={24} />,
+    options: {
+      type: 'heat',
     }
   },
 ]
