@@ -205,7 +205,7 @@ class ChartsService:
     @staticmethod
     def format_heatmap(df):
         try:
-            pivot_df = df.pivot(index='years', columns='names', values='Total des naissances').fillna("null")
+            pivot_df = df.pivot(index='years', columns='names', values='Total des naissances').fillna(0)
 
             data = [{
                 'z': pivot_df.values.tolist(),
