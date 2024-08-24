@@ -15,6 +15,8 @@ export interface IUseFormStore {
 
 export const clearForm: IStatsForm = {
     title: '',
+    chartType: null,
+    chartOrientation: 'v',
     indexes: [],
     columns: [],
     years: {
