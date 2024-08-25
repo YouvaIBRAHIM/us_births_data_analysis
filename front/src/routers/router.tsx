@@ -1,5 +1,5 @@
 import PrivateRoute from "@routers/PrivateRoute"
-import Admin from "@src/pages/Admin.page"
+import UnauthenticatedRoute from "@routers/UnauthenticatedRoute"
 import Home from "@src/pages/Home.page"
 import LoginPage from "@src/pages/Login.page"
 import Profile from "@src/pages/Profile.page"
@@ -17,23 +17,15 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <PrivateRoute roles={["player", "editor", "admin"]}>
+          <PrivateRoute>
             <Home />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "/admin",
-        element: (
-          <PrivateRoute roles={["admin", "editor"]}>
-            <Admin />
           </PrivateRoute>
         ),
       },
       {
         path: "/profile",
         element: (
-          <PrivateRoute roles={["admin", "editor", "player"]}>
+          <PrivateRoute>
             <Profile />
           </PrivateRoute>
         ),
@@ -41,7 +33,7 @@ const router = createBrowserRouter([
       {
         path: "/graphics",
         element: (
-          <PrivateRoute roles={["admin", "editor", "player"]}>
+          <PrivateRoute>
             <Graphics />
           </PrivateRoute>
         ),
@@ -54,11 +46,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element:  <UnauthenticatedRoute>
+                <LoginPage />
+              </UnauthenticatedRoute>,
   },
   {
     path: "/register",
-    element: <RegisterPage />,
+    element: <UnauthenticatedRoute>
+                <RegisterPage />
+              </UnauthenticatedRoute>,
   },
   {
     path: "*",

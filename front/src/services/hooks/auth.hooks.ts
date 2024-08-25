@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material"
 import { useAuthStore } from "@src/stores/auth.store"
 import { useSnackBarStore } from "@src/stores/snackbar.store"
-import { IUserRegister } from "@src/types/user.type"
+import { ILoginCredentials, IUserRegister } from "@src/types/user.type"
 import { useMutation } from "@tanstack/react-query"
 import { FormEvent, useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -13,15 +13,17 @@ export const useLogin = () => {
     password: "",
   })
 
-  const {login} = useAuthStore()
+  const {login, initializeAuth} = useAuthStore()
   const navigate = useNavigate()
   const theme = useTheme()
   const { showSnackBar } = useSnackBarStore()
 
   const {mutate: onLogin, isPending} = useMutation({
-    mutationFn: () => login(credentials),
-    onSuccess: () => {
-      navigate("/")
+    mutationFn: (credentials: ILoginCredentials) => login(credentials),
+    onSuccess: async () => {
+      if (await initializeAuth()) {
+        navigate("/")
+      }
     },
     onError: (error) => {
       showSnackBar(error.message, "error")
@@ -37,7 +39,7 @@ export const useLogin = () => {
 
   const onSubmitLogin = (event: FormEvent) => {
     event.preventDefault()
-    onLogin()
+    onLogin(credentials)
   }
 
   return {
@@ -47,6 +49,7 @@ export const useLogin = () => {
     onSubmitLogin,
     handleCredentialsChange,
     navigate,
+    onLogin
   }
 }
 
@@ -61,6 +64,7 @@ export const useRegister = () => {
   })
 
   const { register } = useAuthStore()
+  const { onLogin } = useLogin()
   const navigate = useNavigate()
   const theme = useTheme()
   const { showSnackBar } = useSnackBarStore()
@@ -68,7 +72,10 @@ export const useRegister = () => {
   const {mutate: onRegisteration, isPending} = useMutation({
     mutationFn: () => register(newUser),
     onSuccess: () => {
-      navigate("/")
+      onLogin({
+        email: newUser.email,
+        password: newUser.password,
+      })
     },
     onError: (error) => {
       showSnackBar(error.message, "error")

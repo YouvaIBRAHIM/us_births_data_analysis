@@ -27,14 +27,10 @@ export interface IUserList {
 }
 
 export interface AuthCheckResponse {
-
-    //username: string
     email: string
-    //roles: IValideUserRoles[]
     first_name: string
     lastName: string
-    id: number,
-    //score: number
+    id: number
 }
 
 export interface LoginCheckResponse {
@@ -54,7 +50,7 @@ export interface AuthState {
   login: (credentials: ILoginCredentials) => Promise<void>
   register: (user: IUserRegister) => Promise<void>
   logout: () => Promise<void>
-  initializeAuth: () => Promise<void>
+  initializeAuth: () => Promise<boolean>
 }
 
 export interface IUserRegister {
