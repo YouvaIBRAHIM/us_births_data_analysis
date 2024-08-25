@@ -19,8 +19,11 @@ export const useForm = () => {
   const {mutate: onSubmitFormMutate, isPending: isPendingStatsData} = useMutation({
       mutationFn: (form: IUseFormStore['form'] ) => getStatsData(form),
       onSuccess: (data: IUseFormStore['result'] | void) => {
-        if (data) {
+        if (data != null) {
           setFormResult(data)
+        }else{
+          showSnackBar("Aucun résultat trouvé.", "warning")
+          setFormResult(null)
         }
         // navigate("/")
       },

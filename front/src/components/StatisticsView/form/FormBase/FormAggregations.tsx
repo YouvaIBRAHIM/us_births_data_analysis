@@ -13,13 +13,6 @@ const noAggregation: IOption[] = [{
   value: null
 }]
 const colOptions: Record<string, IOption[]> = {
-  'names': [
-    ...noAggregation,
-    {
-      label: 'Prénoms composés',
-      value: 'compounds-names'
-    }
-  ],
   'gender': [
     ...noAggregation,
     {
@@ -69,6 +62,10 @@ const indexOptions: Record<string, IOption[]> = {
     {
       label: 'Proportions',
       value: 'proportions'
+    },
+    {
+      label: 'Longueur des prénoms',
+      value: 'names-length'
     }
   ]
 }
@@ -120,9 +117,7 @@ const FormAggregations = () => {
                       flexWrap="wrap" 
                       gap={2} 
                       sx={{
-                        width: {
-                          xs: '100%',
-                        }
+                        width: '100%'
                       }}
                     >
                       <Typography variant="body2">{getLabel(index)}</Typography>
@@ -154,9 +149,7 @@ const FormAggregations = () => {
                       flexWrap="wrap" 
                       gap={2} 
                       sx={{
-                        width: {
-                          xs: '100%',
-                        }
+                        width: '100%'
                       }}
                     >
                       <Typography variant="body2">{getLabel(col)}</Typography>

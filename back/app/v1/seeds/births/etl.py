@@ -12,7 +12,6 @@ from database.connect import SessionLocal
 
 db = SessionLocal()
 
-
 def get_last_processed_year(session):
     last_year = session.query(Year).order_by(Year.id.desc()).first()
     return last_year.year if last_year else None
@@ -34,14 +33,20 @@ def process_files(file_list, session):
         # Concaténer toutes les données en une seule DataFrame
         all_data_df = pd.concat(all_data, ignore_index=True)
 
-        # Chercher ou créer les noms en batch
+        # Chercher ou créer les noms en batch avec le genre correct
         unique_names = all_data_df[['name', 'gender']].drop_duplicates().reset_index(drop=True)
-        existing_names = session.query(Name).filter(Name.name.in_(unique_names['name'].tolist())).all()
-        existing_names_dict = {name.name: name for name in existing_names}
+
+        existing_names = session.query(Name).filter(
+            Name.name.in_(unique_names['name'].tolist()),
+            Name.gender.in_(unique_names['gender'].tolist())
+        ).all()
+
+        # Créer un dictionnaire pour mapper (name, gender) -> id
+        existing_names_dict = {(name.name, name.gender): name.id for name in existing_names}
 
         new_names = []
         for _, row in tqdm(unique_names.iterrows(), total=len(unique_names), desc="Processing unique names"):
-            if row['name'] not in existing_names_dict:
+            if (row['name'], row['gender']) not in existing_names_dict:
                 new_name = Name(name=row['name'], gender=row['gender'])
                 new_names.append(new_name)
 
@@ -49,9 +54,9 @@ def process_files(file_list, session):
             session.bulk_save_objects(new_names)
             session.commit()
 
-        # Récupérer les IDs des noms
-        names_map = {name.name: name.id for name in session.query(Name).all()}
-        all_data_df['name_id'] = all_data_df['name'].map(names_map)
+        # Récupérer les IDs des noms correctement
+        names_map = {(name.name, name.gender): name.id for name in session.query(Name).all()}
+        all_data_df['name_id'] = all_data_df.apply(lambda row: names_map.get((row['name'], row['gender'])), axis=1)
 
         # Préparer les données pour la table Births
         births_data = all_data_df[['name_id', 'year_id', 'births']]
