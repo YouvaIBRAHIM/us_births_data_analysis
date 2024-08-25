@@ -1,4 +1,4 @@
-import { ChartBar, ChartBarHorizontal, ChartLine, ChartPie, ChartScatter, ProhibitInset } from "@phosphor-icons/react"
+import { ChartBar, ChartBarHorizontal, ChartLine, ChartPie, ChartScatter, ProhibitInset, SquaresFour } from "@phosphor-icons/react"
 import { IGraphicsTabsItem, IGraphicsTabs } from '@components/StatisticsView/Graphics/GraphicsTabs/IGraphicsTabs'
 import { Box, Tab, Tabs } from "@mui/material"
 import { useEffect } from "react"
@@ -53,6 +53,14 @@ export const graphicsList: IGraphicsTabsItem[] = [
     icon: <ChartPie size={24} />,
     options: {
       type: 'pie',
+    }
+  },
+  {
+    id: "heat",
+    label: "Graphique thermique",
+    icon: <SquaresFour size={24} />,
+    options: {
+      type: 'heat',
     }
   },
 ]

@@ -1,11 +1,11 @@
 import pandas as pd
-from app.v1.api.stats.stats_errors import InvalidConditionFormat, DatabaseConnectionError, DataFrameProcessingError
+from app.v1.api.stats.stats_errors import InvalidConditionFormat, DataFrameProcessingError
 from sqlalchemy.orm import aliased
-from sqlalchemy.exc import SQLAlchemyError
 from app.v1.models.births import Birth
 from app.v1.models.names import Name
 from app.v1.models.years import Year
 from app.v1.api.stats.stats_model import StatsModel
+from app.v1.api.charts.charts_service import ChartServiceV2
 
 ROUND = 3
 
@@ -20,7 +20,7 @@ class StatsService:
 
     @staticmethod
     async def get_stats(payload):
-        indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy = StatsService.extract_payload_info(payload)
+        indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy, chart_type, chart_orientation, title = StatsService.extract_payload_info(payload)
 
         names_alias = aliased(Name, name='n')
         years_alias = aliased(Year, name='y')
@@ -37,7 +37,7 @@ class StatsService:
         
         try:
             df = await StatsService.get_dataframe(query)
-            
+
             columns_without_birth = list(columns)
 
             if("births" in columns_without_birth):
@@ -54,6 +54,9 @@ class StatsService:
 
             df = await StatsService.apply_order_and_limitation(df, orderBy, limit)
 
+            chart_service = ChartServiceV2(df)
+            chart = chart_service.generate_chart(chart_type, chart_orientation, title)
+
             df = StatsService.clean_dataframe(df)
 
             df.reset_index(inplace=True)  
@@ -62,7 +65,8 @@ class StatsService:
 
             return {
                 "cells": cells,
-                "rows": rows
+                "rows": rows,
+                "chart": chart
             }
         except Exception as e:
             DataFrameProcessingError()
@@ -109,8 +113,11 @@ class StatsService:
 
         limit = payload.get('limit', None)
         orderBy = payload.get('orderBy', None)
+        chart_type = payload.get('chartType', None)
+        chart_orientation = payload.get('chartOrientation', 'v')
+        title = payload.get('title', 'Graphique')
 
-        return indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy
+        return indexes, columns, years, names, gender, conditions, aggregations, limit, orderBy, chart_type, chart_orientation, title
 
     @staticmethod
     def aggregate_by_decade(df: pd.DataFrame, indexes: list) -> pd.DataFrame:
@@ -238,7 +245,7 @@ class StatsService:
         total_births_overall = total_births_per_row.sum()
         
         # Calcul des proportions pour chaque genre (chaque colonne représente un genre)
-        for column in df.columns:
+        for column in df.select_dtypes(include=['number']).columns:
             df[column + '_proportion'] = ((df[column] / total_births_per_row) * 100).round(ROUND)
         
         # Ajout de la colonne 'proportion_total' pour représenter la proportion sur l'ensemble
@@ -362,3 +369,4 @@ class StatsService:
             df = StatsService.add_summary_row(df, aggregations.get('births'), cells)
 
         return df
+

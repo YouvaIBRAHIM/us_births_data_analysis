@@ -28,12 +28,12 @@ const Graphics = () => {
         {
           selectedButtonId && (
             <Plot
-              data={result ? result['data'] as Data[] : dataExample[selectedButtonId] as Data[]}
+              data={result?.chart ? result['chart']['data'] as Data[] : dataExample[selectedButtonId] as Data[]}
               layout={ 
                 { 
                   width: isMobileScreen ? 300 : 0, 
                   title: form.title,
-                  ...(result && result['layout'])
+                  ...(result?.chart && result['chart']['layout'])
                 } as Partial<Plotly.Layout>
               }
             />
