@@ -1,11 +1,19 @@
 import { StoreApi, UseBoundStore, create } from "zustand"
 import { IStatsForm } from "./FormBase/FormBase.types";
+import { PlotParams } from "react-plotly.js";
 
 export interface IUseFormStore {
     form: IStatsForm;
     result: {
         cells: string[],
-        rows: (string | number | null)[][]
+        rows: (string | number | null)[][],
+        chart: {
+            data: PlotParams['data'],
+            layout: {
+                title: string,
+                [key: string]: unknown
+            }
+        } | null
     } | null;
     onFormUpdate: (key: string, value: unknown) => void;
     cleanForm: () => void;
@@ -15,6 +23,8 @@ export interface IUseFormStore {
 
 export const clearForm: IStatsForm = {
     title: '',
+    chartType: null,
+    chartOrientation: 'v',
     indexes: [],
     columns: [],
     years: {

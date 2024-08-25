@@ -2,7 +2,8 @@ from sqlalchemy import Null, null
 from app.v1.api.charts.charts_model import ChartsModel
 from app.v1.api.charts.charts_errors import (
     DataNotFound, InvalidChartType, InvalidConditionFormat, 
-    DatabaseConnectionError, DataProcessingError, DataFrameProcessingError
+    DatabaseConnectionError, DataProcessingError, DataFrameProcessingError,
+    ChartDataProcessingError
 )
 import pandas as pd
 from sqlalchemy.orm import aliased
@@ -10,6 +11,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.v1.models.births import Birth
 from app.v1.models.names import Name
 from app.v1.models.years import Year
+import plotly.graph_objs as go
+import numpy as np
 
 class ChartsService:
 
@@ -218,3 +221,87 @@ class ChartsService:
 
         return data
 
+
+
+class ChartServiceV2:
+    def __init__(self, df: pd.DataFrame):
+        self.df = df.replace([np.inf, -np.inf], None).fillna(0)
+
+    def generate_chart(self, chart_type: str, chart_orientation: str, title: str = "Graphique"):
+        try:
+            if chart_type:
+                if chart_type == 'bar':
+                    data = self.format_bar_or_line_chart('bar', chart_orientation)
+                elif chart_type == 'line':
+                    data = self.format_bar_or_line_chart('line', chart_orientation)
+                elif chart_type == 'pie':
+                    data = self.format_pie_chart()
+                elif chart_type == 'scatter':
+                    data = self.format_scatter_chart()
+                elif chart_type == 'heat':
+                    data = self.format_heatmap()
+                else:
+                    raise InvalidChartType()
+
+
+                layout = {
+                    'title': title,
+                    'xaxis': {'title': ' + '.join(self.df.columns) if len(self.df.columns) > 0 else 'X-axis'},
+                    'yaxis': {'title': 'Total des naissances'}
+                }
+
+                chart_data = [trace.to_plotly_json() for trace in data]
+                chart_layout = go.Layout(**layout).to_plotly_json()
+
+                return {'data': chart_data, 'layout': chart_layout}
+            
+            else:
+                return None
+        except Exception as e:
+            raise ChartDataProcessingError()
+
+    def format_bar_or_line_chart(self, chart_type: str, chart_orientation: str):
+        x = self.df.index.tolist()
+        traces = []
+        for col in self.df.columns:
+            trace = go.Bar(
+                x=x,
+                y=self.df[col].tolist(),
+                name=col,
+                orientation='v' if chart_orientation == 'v' else 'h'
+            ) if chart_type == 'bar' else go.Scatter(
+                x=x,
+                y=self.df[col].tolist(),
+                mode='lines+markers',
+                name=col
+            )
+            traces.append(trace)
+        return traces
+
+    def format_pie_chart(self):
+        labels = self.df.index.tolist()
+        values = self.df[self.df.columns[0]].tolist()
+        trace = go.Pie(labels=labels, values=values)
+        return [trace]
+
+    def format_scatter_chart(self):
+        x = self.df.index.tolist()
+        traces = []
+        for col in self.df.columns:
+            trace = go.Scatter(
+                x=x,
+                y=self.df[col].tolist(),
+                mode='markers',
+                name=col
+            )
+            traces.append(trace)
+        return traces
+
+    def format_heatmap(self):
+        trace = go.Heatmap(
+            z=self.df.values.tolist(),
+            x=self.df.columns.tolist(),
+            y=self.df.index.tolist(),
+            colorscale='Viridis'
+        )
+        return [trace]

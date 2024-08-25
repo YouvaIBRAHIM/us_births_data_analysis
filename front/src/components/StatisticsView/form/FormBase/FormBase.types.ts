@@ -2,6 +2,8 @@ import { ICondition } from "@src/components/Conditions/Conditions.types";
 
 export interface IStatsForm{
     title: string;
+    chartType: string | null,
+    chartOrientation: 'v' | 'h',
     indexes: IStatsFormFields['fields'][]
     columns: IStatsFormFields['fields'][]
     years: {

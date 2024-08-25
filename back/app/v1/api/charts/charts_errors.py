@@ -30,3 +30,7 @@ class DataFrameProcessingError(RuntimeError):
 
 class FilterApplicationError(RuntimeError):
     message = 'ERROR_FILTER_APPLICATION'
+
+
+class ChartDataProcessingError(RuntimeError):
+    message = 'ERROR_CHART_DATA_PROCESSING'

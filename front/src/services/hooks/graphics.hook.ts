@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 import { getGraphicData } from "@services/apis/graphics.api"
 import { IUseGraphicFormStore, useGraphicFormStore } from "@src/components/Graphics/GraphicsForm/GraphicForm.store"
-import { Condition } from "@src/components/Conditions/Conditions.types"
+import { ICondition } from "@src/components/Conditions/Conditions.types"
 import { useTranslation } from "react-i18next"
 import { IAxis } from "@src/components/Graphics/GraphicsForm/GraphicFormBase/GraphicFormBase.types"
 
@@ -36,7 +36,7 @@ export const useGraphics = () => {
     }
   }
 
-  const onSetConditions = (conditions: Condition[]) => {
+  const onSetConditions = (conditions: ICondition[]) => {
       onFormUpdate("conditions", conditions)
   }
 
