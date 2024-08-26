@@ -38,7 +38,7 @@ const RegisterPage: React.FC = () => {
             <CustomTextField
               label="Nom"
               variant="outlined"
-              value={newUser.lastName}
+              value={newUser.last_name}
               onChange={(e) => handleNewUserChange("lastName", e.target.value)}
               required
             />

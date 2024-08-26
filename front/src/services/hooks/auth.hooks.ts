@@ -55,7 +55,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   const [newUser, setNewUser] = useState<IUserRegister>({
     first_name: "",
-    lastName: "",
+    last_name: "",
     email: "",
     password: "",
   })

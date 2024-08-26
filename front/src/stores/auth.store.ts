@@ -30,7 +30,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         email : data.email,
         id: data.id,
         first_name : data.first_name,
-        lastName : data.lastName
+        last_name : data.last_name,
+        is_superuser: data.is_superuser,
         
       } })
       localStorage.setItem("user", JSON.stringify(data))
@@ -43,6 +44,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await fetchLogout()
       set({ token: null, user: null })
       localStorage.removeItem("user")
+      localStorage.removeItem('token');
     } catch (error) {
       console.error("Logout failed:", error)
     }
