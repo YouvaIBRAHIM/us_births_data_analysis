@@ -10,3 +10,4 @@ asyncpg==0.29.0
 alembic==1.13.2
 plotly==5.23.0
 passlib==1.7.4
+websockets==13.0

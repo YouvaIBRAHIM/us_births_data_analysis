@@ -13,19 +13,19 @@ const fieldOptions = [
     {
         label: "Années",
         value: "years"
-      },
-      {
+    },
+    {
         label: "Prénoms",
         value: "names"
-      },
-      {
+    },
+    {
         label: "Genre",
         value: "gender"
-      },
-      {
+    },
+    {
         label: "Naissances",
         value: "births"
-      }
+    }
 ]
 
 const Form = () => {
