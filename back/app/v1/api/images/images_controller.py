@@ -1,4 +1,4 @@
-from fastapi import WebSocket, WebSocketDisconnect, APIRouter, status, Depends
+from fastapi import WebSocket, WebSocketDisconnect, APIRouter, status, Depends, Request
 from fastapi.responses import JSONResponse
 import asyncio
 from typing import List
@@ -6,47 +6,36 @@ from pydantic import BaseModel
 
 # Import du service d'authentification utilisateur
 from app.v1.api.users.users_service import current_active_user
+from app.v1.api.images.images_service import ImagesService
 
 # Stockage temporaire des connexions WebSocket
 clients: List[WebSocket] = []
 
 router = APIRouter(prefix="/images", tags=["images"])
 
-class ImagePayload(BaseModel):
-    image: str
 
 @router.post("/generate-description")
 async def upload_image(
-    payload: ImagePayload,
+    request: Request,
     # user=Depends(current_active_user)  # Activez ceci si vous voulez authentifier l'utilisateur
 ):
     try:
         # Décoder l'image depuis la base64 (décommenter si nécessaire)
-        # image_data = base64.b64decode(payload.image)
+        payload = await request.json()
+        image_data = payload.get("image", None)
 
-        tasks = []
-        for client in clients:
-            tasks.append(asyncio.create_task(send_websocket_message(client)))
-        
-        await asyncio.gather(*tasks)
+        if image_data:
+            tasks = []
+            for client in clients:
+                tasks.append(asyncio.create_task(ImagesService.describe_image(client, image_data)))
+            
+            await asyncio.gather(*tasks)
 
-        return JSONResponse(content={"message": "Image reçue et traitée"}, status_code=status.HTTP_200_OK)
+            return JSONResponse(content={"message": "Image reçue et traitée"}, status_code=status.HTTP_200_OK)
+        return JSONResponse(content="ERROR_NO_IMAGE", status_code=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print(f"Erreur : {e}")
         return JSONResponse(content="INTERNAL_SERVER_ERROR", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-async def send_websocket_message(client: WebSocket):
-    try:
-        await client.send_text("L'image a été reçue. Traitement en cours...")
-        # Simuler un long traitement
-        for i in range(5):
-            await asyncio.sleep(1)
-            await client.send_text(f"Traitement étape {i+1}/5...")
-        await client.send_text("Traitement terminé. Résultat : L'image a été traitée avec succès !")
-    except Exception as e:
-        print(f"Erreur lors de l'envoi de message WebSocket : {e}")
-        await client.close()
 
 @router.websocket("/description/stream")
 async def websocket_endpoint(

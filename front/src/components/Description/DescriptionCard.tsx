@@ -2,9 +2,9 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import { X } from '@phosphor-icons/react';
 import { Skeleton, Stack } from '@mui/material';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface IDescriptionCard{
     title: string,
@@ -33,9 +33,7 @@ const DescriptionCard = ({title, messages, onClose, isPending}: IDescriptionCard
             >
                 {
                     !isPending && messages && messages.length > 0 ?
-                    <Typography variant="body2" align='left'>
-                        {...messages}
-                    </Typography>
+                        <MarkdownPreview source={messages.join('')} style={{ padding: 16, textAlign: 'left' }} />
                     :
                     <Stack 
                         flexDirection="column"
