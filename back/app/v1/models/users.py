@@ -7,6 +7,7 @@ from fastapi_users_db_sqlalchemy.access_token import (
 from database.base import Base
 import fastapi_users_db_sqlalchemy
 import uuid
+from pydantic import BaseModel
 
 
 
@@ -21,3 +22,8 @@ class UserTable(SQLAlchemyBaseUserTable, Base):
 
 class AccessToken(SQLAlchemyBaseAccessTokenTableUUID, Base):  
     pass
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str

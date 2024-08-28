@@ -21,7 +21,6 @@ export const useProfile = () => {
   const navigate = useNavigate()
 
   const [profile, setProfile] = useState<IProfile>({
-    id: "",
     first_name: "",
     last_name: "",
     email: "",
@@ -36,7 +35,6 @@ export const useProfile = () => {
 
   const [profileUpdate, setProfileUpdate] = useState<IProfileUpdate>({
     profile: {
-      id: "",
       first_name: "",
       last_name: "",
       email: "",
@@ -84,8 +82,10 @@ export const useProfile = () => {
   })
 
   const deleteUserMutation = useMutation({
-    mutationFn: (id: string) => deleteUserAccount(id),
+    mutationFn: () => deleteUserAccount(),
     onSuccess: () => {
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
       setConfirmationModal(null)
       setUser(null)
       showSnackBar("Votre compte a été supprimé", "success")
@@ -149,10 +149,10 @@ export const useProfile = () => {
     })
   }
 
-  const handleDeleteUserAccount = (id: string) => {
+  const handleDeleteUserAccount = () => {
     setConfirmationModal({
       title: "Voulez-vous vraiment supprimer votre compte ?",
-      action: () => deleteUserMutation.mutate(id),
+      action: () => deleteUserMutation.mutate(),
     })
   }
 
@@ -163,7 +163,6 @@ export const useProfile = () => {
   useEffect(() => {
     if (user) {
       setProfile({
-        id: user.id,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,

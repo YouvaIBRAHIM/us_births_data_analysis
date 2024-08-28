@@ -47,16 +47,14 @@ const Profile = () => {
                 <Typography variant="h4" sx={{ marginTop: 2 }}>
                   {user?.first_name}
                 </Typography>
-                {user.is_superuser ? (
                 <Button
                   variant="contained"
                   color="error"
                   sx={{ marginTop: 2 }}
-                  onClick={()=>handleDeleteUserAccount(profile.id)}
+                  onClick={()=>handleDeleteUserAccount()}
                 >
                   Supprimer mon compte
                 </Button>
-                ):(<></>)}
               </CardContent>
             ) : (
               <UserProfileCardSkeleton />

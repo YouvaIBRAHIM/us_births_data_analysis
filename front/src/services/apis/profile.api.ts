@@ -7,10 +7,6 @@ const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL
 
 export const updateProfile = async (profile: IProfileUpdate): Promise<IProfile| void> => {
   const token = localStorage.getItem('token');
-  const apiUrl = `${BACKEND_BASE_URL}/v1/users/users/me`;
-  console.log("API URL:", apiUrl);
-  console.log("Token:", token);
-  console.log("Profile Update Data:", profile);
 
   try {
     const response = await fetch(`${BACKEND_BASE_URL}/v1/users/users/me`, {
@@ -19,7 +15,6 @@ export const updateProfile = async (profile: IProfileUpdate): Promise<IProfile| 
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`,
       },
-      credentials: "include",
       body: JSON.stringify({
         email: profile.profile.email,
         first_name: profile.profile.first_name,
@@ -28,12 +23,8 @@ export const updateProfile = async (profile: IProfileUpdate): Promise<IProfile| 
       }),
     })
 
-    console.log("Response Status:", response.status);
-    console.log("Response Headers:", response.headers);
-
     return (await checkResponse(response)) as IProfile
   } catch (error) {
-    console.error("Error in updateProfile:", error);
     if (error instanceof Error) {
       throw new Error(error.message)
     }
@@ -41,33 +32,32 @@ export const updateProfile = async (profile: IProfileUpdate): Promise<IProfile| 
 }
 
 export const changePassword = async (passwordChange: IPasswords): Promise<void> => {
+  const token = localStorage.getItem("token")
   try {
-    const csrfToken = await getCsrfToken()
-    const response = await fetch(
-      `${BACKEND_BASE_URL}/v1/users/auth/reset-password`,
+    await fetch(
+      `${BACKEND_BASE_URL}/v1/users/change-password`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken || "",
+          "Authorization": `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify(passwordChange),
       },
     )
-    await checkResponse(response)
   } catch (error) {
     if (error instanceof Error) {
+      console.error("Error during password change:", error.message);
       throw new Error(error.message)
     }
   }
 }
 
-export const deleteUserAccount = async (id: string): Promise<void> => {
+export const deleteUserAccount = async (): Promise<void> => {
   const token = localStorage.getItem('token');
 
   try {
-    await fetch(`${BACKEND_BASE_URL}/v1/users/users/${id}`, {
+    await fetch(`${BACKEND_BASE_URL}/v1/users/me`, {
       method: "DELETE",
       headers: {
         'Authorization': `Bearer ${token}`,
