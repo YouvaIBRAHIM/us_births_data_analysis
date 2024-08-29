@@ -5,16 +5,32 @@ import StatsListView from '@src/components/StatisticsView/StatsListView';
 import Form from '@src/components/StatisticsView/form/Form';
 import { useFormStore } from '@src/components/StatisticsView/form/Form.store';
 import { useDescribeImage } from '@src/services/hooks/describeComponent.hook';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 export default function Home() {
     const { result } = useFormStore()
-    const { ref, convertToImageAndDescribe, messages, isSendingImage } = useDescribeImage()
+    const { 
+        ref, 
+        convertToImageAndDescribe, 
+        messages, 
+        isSendingImage,
+        hasFinishedStream,
+        stopStream 
+    } = useDescribeImage()
+    const [showDescriptionCard, setShowDescriptionCard] = useState(false)
 
     useEffect(() => {
         if (result) {
             convertToImageAndDescribe()
+            setShowDescriptionCard(true)
         }
     }, [result])
+
+    const stopCurrentStream = () => {
+        if (!hasFinishedStream) {
+            stopStream()
+        }
+        setShowDescriptionCard(false)
+    }
 
     return (    
     <Grid container spacing={4}>
@@ -32,7 +48,7 @@ export default function Home() {
             </Stack>
         </Grid>
         {
-            result && (
+            showDescriptionCard && (
                 <Grid 
                     item 
                     xs={12}
@@ -42,10 +58,12 @@ export default function Home() {
                 >
                     <Paper elevation={5}>
                         <DescriptionCard 
-                            onClose={() => console.log('close')}
+                            onClose={stopCurrentStream}
+                            onRetry={convertToImageAndDescribe}
                             title={(isSendingImage || !messages || messages.length == 0) ? "Analyse des données en cours..." : "Analyse des données"} 
                             messages={messages} 
                             isPending={isSendingImage} 
+                            hasFinishedStream={hasFinishedStream && (messages && messages.length > 0)}
                         />
                     </Paper>
                 </Grid>

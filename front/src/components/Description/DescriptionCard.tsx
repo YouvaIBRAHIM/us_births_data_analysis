@@ -2,25 +2,39 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
-import { X } from '@phosphor-icons/react';
+import { ArrowCounterClockwise, X } from '@phosphor-icons/react';
 import { Skeleton, Stack } from '@mui/material';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface IDescriptionCard{
     title: string,
     onClose: () => void,
+    onRetry: () => void,
     messages: string[],
-    isPending: boolean
+    isPending: boolean,
+    hasFinishedStream: boolean,
 }
-const DescriptionCard = ({title, messages, onClose, isPending}: IDescriptionCard) => {
+const DescriptionCard = ({title, messages, onClose, onRetry, isPending, hasFinishedStream}: IDescriptionCard) => {
 
     return (
         <Card>
             <CardHeader
                 action={
-                <IconButton aria-label="close">
-                    <X size={24} onClick={onClose} />
-                </IconButton>
+                    <Stack
+                        gap={2}
+                        flexDirection="row"
+                    >
+                        {
+                            hasFinishedStream &&
+                            <IconButton aria-label="retry">
+                                <ArrowCounterClockwise size={24} onClick={onRetry} />
+                            </IconButton>
+                        }
+                        
+                        <IconButton aria-label="close">
+                            <X size={24} onClick={onClose} />
+                        </IconButton>
+                    </Stack>
                 }
                 title={title}
             />

@@ -11,12 +11,19 @@ interface UseDescribeImage{
     ref: React.RefObject<HTMLDivElement>;
     convertToImageAndDescribe: () => Promise<void>;
     isSendingImage: boolean,
-    messages: string[]
+    messages: string[],
+    hasFinishedStream: boolean,
+    stopStream: () => void
 };
 
 export const useDescribeImage = (): UseDescribeImage => {
     const ref = useRef<HTMLDivElement>(null);
-    const { messages, onSetMessage } = useWebSocket(IMAGE_DESC_WEBSOCKET_URL);
+    const { 
+        messages, 
+        onSetMessage, 
+        hasFinishedStream,
+        stopStream 
+    } = useWebSocket(IMAGE_DESC_WEBSOCKET_URL);
     const { showSnackBar } = useSnackBarStore()
 
     const {mutate: sendImage, isPending: isSendingImage} = useMutation({
@@ -47,5 +54,12 @@ export const useDescribeImage = (): UseDescribeImage => {
         }
     };
 
-    return { ref, convertToImageAndDescribe, isSendingImage, messages };
+    return { 
+        ref, 
+        convertToImageAndDescribe, 
+        isSendingImage, 
+        messages,
+        hasFinishedStream,
+        stopStream
+    };
 };
