@@ -51,7 +51,7 @@ export interface AuthState {
   login: (credentials: ILoginCredentials) => Promise<void>
   register: (user: IUserRegister) => Promise<void>
   logout: () => Promise<void>
-  initializeAuth: () => Promise<void>
+  initializeAuth: () => Promise<boolean>
 }
 
 export interface IUserRegister {

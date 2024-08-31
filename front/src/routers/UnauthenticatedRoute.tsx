@@ -4,18 +4,18 @@ import { useAuthStore } from "@stores/auth.store"
 import { Navigate, Outlet } from "react-router-dom"
 
 
-interface PrivateRouteProps {
+interface IUnauthenticatedRouteProps {
   children?: ReactNode
 }
 
-const PrivateRoute = ({ children }: PrivateRouteProps) => {
+const UnauthenticatedRoute = ({ children }: IUnauthenticatedRouteProps) => {
   const { user } = useAuthStore()
 
-  if (!user) {
-    return <Navigate to="/login" />
+  if (user) {
+    return <Navigate to="/" />
   }
 
   return children ? <>{children}</> : <Outlet />
 }
 
-export default PrivateRoute
+export default UnauthenticatedRoute

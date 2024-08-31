@@ -10,7 +10,7 @@ import { AuthState } from "@src/types/user.type"
 
 const user = localStorage.getItem("user")
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   user: user ? JSON.parse(user) : null,
   setToken: (token) => set({ token }),
@@ -41,10 +41,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   logout: async () => {
     try {
-      await fetchLogout()
+      const res = await fetchLogout()
       set({ token: null, user: null })
       localStorage.removeItem("user")
       localStorage.removeItem('token');
+
+      return await res.json()
     } catch (error) {
       console.error("Logout failed:", error)
     }
@@ -54,8 +56,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const data = await fetchCheckAuth()
       set({ user: data })
       localStorage.setItem("user", JSON.stringify(data))
+      return data ? true : false
     } catch (error) {
       set({ user: null })
+      return false
     }
   },
 }))
