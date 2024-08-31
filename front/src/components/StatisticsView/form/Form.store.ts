@@ -23,6 +23,7 @@ export interface IUseFormStore {
 
 export const clearForm: IStatsForm = {
     title: '',
+    generateReport: false,
     chartType: null,
     chartOrientation: 'v',
     indexes: [],

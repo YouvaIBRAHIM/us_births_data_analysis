@@ -23,11 +23,12 @@ async def upload_image(
         # Décoder l'image depuis la base64 (décommenter si nécessaire)
         payload = await request.json()
         image_data = payload.get("image", None)
+        form = payload.get("form", {})
 
         if image_data:
             tasks = []
             for client in clients:
-                tasks.append(asyncio.create_task(ImagesService.describe_image(client, image_data)))
+                tasks.append(asyncio.create_task(ImagesService.describe_image(client, image_data, form)))
             
             await asyncio.gather(*tasks)
 

@@ -4,6 +4,7 @@ import { useWebSocket } from '@services/hooks/websocket.hook';
 import { useSnackBarStore } from '@src/stores/snackbar.store';
 import { generageDecriptionFromImage } from '@services/apis/describeImage.api';
 import { useMutation } from '@tanstack/react-query';
+import { useFormStore } from '@src/components/StatisticsView/form/Form.store';
 
 const IMAGE_DESC_WEBSOCKET_URL = import.meta.env.VITE_IMAGE_DESC_WEBSOCKET_URL
 
@@ -25,9 +26,10 @@ export const useDescribeImage = (): UseDescribeImage => {
         stopStream 
     } = useWebSocket(IMAGE_DESC_WEBSOCKET_URL);
     const { showSnackBar } = useSnackBarStore()
+    const { form } = useFormStore()
 
     const {mutate: sendImage, isPending: isSendingImage} = useMutation({
-        mutationFn: (dataUrl: string) => generageDecriptionFromImage(dataUrl),
+        mutationFn: (dataUrl: string) => generageDecriptionFromImage(dataUrl, form),
         onError: (error) => {
             showSnackBar(error.message, "error")
         },

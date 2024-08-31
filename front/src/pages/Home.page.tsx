@@ -7,7 +7,7 @@ import { useFormStore } from '@src/components/StatisticsView/form/Form.store';
 import { useDescribeImage } from '@src/services/hooks/describeComponent.hook';
 import { useEffect, useState } from 'react';
 export default function Home() {
-    const { result } = useFormStore()
+    const { result, form } = useFormStore()
     const { 
         ref, 
         convertToImageAndDescribe, 
@@ -19,11 +19,13 @@ export default function Home() {
     const [showDescriptionCard, setShowDescriptionCard] = useState(false)
 
     useEffect(() => {
-        if (result) {
+        if (form.generateReport && result) {
+            console.log("generate report...");
+            
             convertToImageAndDescribe()
             setShowDescriptionCard(true)
         }
-    }, [result])
+    }, [result, form.generateReport])
 
     const stopCurrentStream = () => {
         if (!hasFinishedStream) {
@@ -48,7 +50,7 @@ export default function Home() {
             </Stack>
         </Grid>
         {
-            showDescriptionCard && (
+            result && (
                 <Grid 
                     item 
                     xs={12}

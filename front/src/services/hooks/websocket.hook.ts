@@ -32,7 +32,7 @@ export const useWebSocket = (url: string, reconnect: boolean = true): UseWebSock
             if (hasFinishedStream) {
                 setHasFinishedStream(false)
             }
-            if (event.data === "END_OF_STREAM") {
+            if (event.data === "END_OF_STREAM" && ws.current) {
                 setHasFinishedStream(true)
             } else {
                 setMessages((prev) => [...prev, event.data]);

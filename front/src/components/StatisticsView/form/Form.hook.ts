@@ -54,7 +54,11 @@ export const useForm = () => {
     };
 
     return Object.keys(errors).length === 0;
-};
+  };
+
+  const onSetGenerateReport = (value: boolean) => {
+    onFormUpdate('generateReport', value)
+  }
 
   return { 
       form, 
@@ -63,7 +67,8 @@ export const useForm = () => {
       onSetConditions,
       isPendingStatsData,
       selectedButtonId,
-      onSelectedButtonId
+      onSelectedButtonId,
+      onSetGenerateReport
   }
 
 }
