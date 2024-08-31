@@ -23,7 +23,7 @@ function App() {
 
   useEffect(() => {
     initializeAuth()
-  }, [initializeAuth])
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>

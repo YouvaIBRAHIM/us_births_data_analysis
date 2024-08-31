@@ -64,7 +64,7 @@ export async function fetchAccess(user: ILoginCredentials): Promise<LoginCheckRe
 }
 
 export async function fetchRegister(
-  user: IUserRegister,
+  user: IUserRegister
 ): Promise<AuthCheckResponse> {
 
   const response = await fetch(`${BACKEND_BASE_URL}/v1/users/auth/register/`, {

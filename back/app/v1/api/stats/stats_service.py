@@ -62,7 +62,7 @@ class StatsService:
             df.reset_index(inplace=True)  
             cells = df.columns.tolist() 
             rows = df.values.tolist() 
-
+            
             return {
                 "cells": cells,
                 "rows": rows,

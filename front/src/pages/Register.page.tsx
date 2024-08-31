@@ -1,9 +1,9 @@
 import {
-  Box,
   Button,
   Container,
   Link,
   Paper,
+  Stack,
   Typography,
 } from "@mui/material"
 import PasswordTextField from "@src/components/Inputs/PasswordTextField"
@@ -24,17 +24,27 @@ const RegisterPage: React.FC = () => {
   return (
     <Container component="main" maxWidth="sm">
       <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Stack 
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+          width="100%"
+        >
           <img
             src={theme.palette.mode === 'dark' ? 'logo.png' : 'logo.png'}
             alt='logo'
             loading="lazy"
             height={150}
+            width={150}
           />
           <Typography component="h1" variant="h2">
             Inscription
           </Typography>
-          <Box component="form" onSubmit={onSubmitRegisteration} sx={{ mt: 1 }}>
+          <Stack
+            flexDirection="column"
+            gap={1}
+            width="100%"
+          >
             <CustomTextField
               label="Nom"
               variant="outlined"
@@ -66,12 +76,12 @@ const RegisterPage: React.FC = () => {
               required
             />
             <Button
-              type="submit"
               variant="contained"
               color="primary"
               fullWidth
               sx={{ mt: 3, mb: 2 }}
               disabled={isPending}
+              onClick={onSubmitRegisteration} 
             >
               {isPending ? "Inscription en cours..." : "Inscription"}
             </Button>
@@ -82,8 +92,8 @@ const RegisterPage: React.FC = () => {
             >
               Vous avez déjà un compte ? Connectez-vous
             </Link>
-          </Box>
-        </Box>
+          </Stack>
+        </Stack>
       </Paper>
     </Container>
   )
