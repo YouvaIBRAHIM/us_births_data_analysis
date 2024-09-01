@@ -16,12 +16,12 @@ def get_last_processed_year(session):
     last_year = session.query(Year).order_by(Year.id.desc()).first()
     return last_year.year if last_year else None
 
-def process_files(file_list, session):
+def process_files(file_list, session, batch_size=1000):
     try:
         all_data = []
 
         # Lire tous les fichiers et les concaténer dans une seule DataFrame
-        for filename in tqdm(file_list, desc="Reading files"):
+        for filename in tqdm(file_list, desc="Lecture des fichiers"):
             year_from_filename = get_year_from_string(filename)
             year_data = {'year': year_from_filename}
             year, is_year_created = get_or_create(session=session, model=Year, defaults=year_data, **year_data)
@@ -33,7 +33,6 @@ def process_files(file_list, session):
         # Concaténer toutes les données en une seule DataFrame
         all_data_df = pd.concat(all_data, ignore_index=True)
 
-        # Chercher ou créer les noms en batch avec le genre correct
         unique_names = all_data_df[['name', 'gender']].drop_duplicates().reset_index(drop=True)
 
         existing_names = session.query(Name).filter(
@@ -45,7 +44,7 @@ def process_files(file_list, session):
         existing_names_dict = {(name.name, name.gender): name.id for name in existing_names}
 
         new_names = []
-        for _, row in tqdm(unique_names.iterrows(), total=len(unique_names), desc="Processing unique names"):
+        for _, row in tqdm(unique_names.iterrows(), total=len(unique_names), desc="Vérification des nouveaux prénoms"):
             if (row['name'], row['gender']) not in existing_names_dict:
                 new_name = Name(name=row['name'], gender=row['gender'])
                 new_names.append(new_name)
@@ -54,24 +53,37 @@ def process_files(file_list, session):
             session.bulk_save_objects(new_names)
             session.commit()
 
-        # Récupérer les IDs des noms correctement
-        names_map = {(name.name, name.gender): name.id for name in session.query(Name).all()}
+        # Récupérer les IDs des prénoms correctement
+        names = session.query(Name).all()
+        names_map = {(name.name, name.gender): name.id for name in tqdm(names, total=len(names), desc="Récupération des tous les prénoms")}
         all_data_df['name_id'] = all_data_df.apply(lambda row: names_map.get((row['name'], row['gender'])), axis=1)
 
         # Préparer les données pour la table Births
         births_data = all_data_df[['name_id', 'year_id', 'births']]
 
-        # Insérer en bloc avec gestion des conflits, sans mise à jour (conserver les données existantes)
-        insert_stmt = insert(Birth).values(births_data.to_dict(orient='records'))
-        upsert_stmt = insert_stmt.on_conflict_do_nothing(
-            index_elements=['name_id', 'year_id']
-        )
-        session.execute(upsert_stmt)
+        print(births_data.head())
+
+        print(f"Nombre de ligne à insérer dans la table births : {len(births_data)}")
+
+        row_count = 0
+        for start in tqdm(range(0, len(births_data), batch_size), desc="Insertions des naissances"):
+            batch = births_data.iloc[start:start + batch_size]
+            insert_stmt = insert(Birth).values(batch.to_dict(orient='records'))
+            upsert_stmt = insert_stmt.on_conflict_do_nothing(
+                index_elements=['name_id', 'year_id']
+            )
+            result = session.execute(upsert_stmt)
+            row_count += result.rowcount
+
+            session.flush()
+
+        print(f"Nombre de ligne à insérées dans la table births : {row_count}")
+
         session.commit()
 
     except Exception as e:
+        print(f"Error : {e}")
         session.rollback()
-        print(f"Error processing files: {e}")
     finally:
         session.close()
 
