@@ -5,7 +5,7 @@ export interface IStatsForm{
     chartType: string | null,
     chartOrientation: 'v' | 'h',
     indexes: IStatsFormFields['fields'][]
-    columns: IStatsFormFields['fields'][]
+    columns: (IStatsFormFields['fields'] | "births")[]
     years: {
         type: "all" | "enum" | "period"
         field: string;
@@ -22,7 +22,7 @@ export interface IStatsForm{
     },
     limit: number | null,
     orderBy: {
-        field: IStatsFormFields['fields'],
+        field: IStatsFormFields['fields'] | 'births',
         order: 'asc' | 'desc'
     } | null,
 }
