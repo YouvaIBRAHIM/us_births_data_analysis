@@ -274,6 +274,16 @@ class StatsService:
         return length_counts
     
     @staticmethod
+    def count_names_per_year(df: pd.DataFrame) -> pd.DataFrame:
+        df_filled = df.fillna(0)        
+        df_bool = df_filled > 0
+        df_count = df_bool.sum(axis=1)
+        
+        df_count = df_count.to_frame(name='Nombre de prénoms')
+        
+        return df_count
+    
+    @staticmethod
     def get_conditions(payload, names_alias, years_alias, births_alias):
         conditions = []
         for condition in payload.get('conditions', []):
@@ -358,9 +368,13 @@ class StatsService:
             if aggregations.get('names') == 'names-length':
                 df = StatsService.aggregate_names_length(df)
 
-        if 'years' in indexes and aggregations.get('years') == 'decades':
-            df = StatsService.aggregate_by_decade(df, indexes)
+        if 'years' in indexes :
+            if aggregations.get('years') == 'decades':
+                df = StatsService.aggregate_by_decade(df, indexes)
 
+            if aggregations.get('years') == 'count-names-per-year' :
+                df = StatsService.count_names_per_year(df)
+        
         if 'gender' in columns and aggregations.get('gender') == 'proportions':
             df = StatsService.calculate_gender_proportions(df)
 

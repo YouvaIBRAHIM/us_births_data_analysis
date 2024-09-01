@@ -9,5 +9,6 @@
     "ERROR_DATABASE_CONNECTION": "Database connection error",
     "ERROR_DATA_PROCESSING": "Data processing error",
     "ERROR_DATAFRAME_PROCESSING": "DataFrame processing error",
+    "ERROR_STATS_NOT_FOUND": "Data not found",
     "ERROR_FILTER_APPLICATION": "You do not have permission to access this API"
 }

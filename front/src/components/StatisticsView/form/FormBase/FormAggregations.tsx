@@ -51,6 +51,10 @@ const indexOptions: Record<string, IOption[]> = {
     {
       label: 'Par décennies',
       value: 'decades'
+    },
+    {
+      label: 'Nombre de prénoms par année',
+      value: 'count-names-per-year'
     }
   ],
   'names': [
