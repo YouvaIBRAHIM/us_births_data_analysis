@@ -29,8 +29,9 @@ export interface IUserList {
 export interface AuthCheckResponse {
     email: string
     first_name: string
-    lastName: string
-    id: number
+    last_name: string
+    id: string,
+    is_superuser: boolean,
 }
 
 export interface LoginCheckResponse {
@@ -55,7 +56,7 @@ export interface AuthState {
 
 export interface IUserRegister {
   first_name: string
-  lastName: string
+  last_name: string
   email: string
   password: string
 }

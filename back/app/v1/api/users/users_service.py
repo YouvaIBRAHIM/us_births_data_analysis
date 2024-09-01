@@ -3,6 +3,7 @@ import os
 from app.v1.models.users import UserTable, AccessToken
 from dotenv import load_dotenv
 
+from passlib.context import CryptContext
 from app.v1.schemas.users import UserRead
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
@@ -44,9 +45,10 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
-
+def password_hash(password: str) -> str:
+    return pwd_context.hash(password)
 
 def get_database_strategy(
     access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),

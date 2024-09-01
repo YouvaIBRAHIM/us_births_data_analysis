@@ -10,7 +10,7 @@ import { useSnackBarStore } from "@src/stores/snackbar.store"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
-import { IPasswords, IProfile } from "@src/types/profile.type"
+import { IPasswords, IProfile, IProfileUpdate } from "@src/types/profile.type"
 
 interface IConfirmationModal {
   title: string
@@ -21,10 +21,10 @@ export const useProfile = () => {
   const navigate = useNavigate()
 
   const [profile, setProfile] = useState<IProfile>({
-    // username: "",
     first_name: "",
     last_name: "",
     email: "",
+    is_superuser: false
   })
 
   const [passwords, setPasswords] = useState<IPasswords>({
@@ -33,21 +33,33 @@ export const useProfile = () => {
     confirm_password: "",
   })
 
+  const [profileUpdate, setProfileUpdate] = useState<IProfileUpdate>({
+    profile: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      is_superuser: false,
+    },
+    current_password: "",
+  });
+  
+
   const [confirmationModal, setConfirmationModal] =
     useState<IConfirmationModal | null>(null)
 
   const { user, setUser } = useAuthStore()
 
   const updateProfileMutation = useMutation({
-    mutationFn: (profile: IProfile) => updateProfile(profile),
+    mutationFn: (profile: IProfileUpdate) => updateProfile(profile),
     onSuccess: (data) => {
       if (data) {
-        const { first_name, last_name, email } = data
+        const { first_name, last_name, email, is_superuser} = data
         setUser({
-          id: user?.id as number,
+          id: user?.id as string,
           first_name: first_name,
-          lastName: last_name,
+          last_name: last_name,
           email,
+          is_superuser: is_superuser,
         })
       }
       setConfirmationModal(null)
@@ -72,6 +84,8 @@ export const useProfile = () => {
   const deleteUserMutation = useMutation({
     mutationFn: () => deleteUserAccount(),
     onSuccess: () => {
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
       setConfirmationModal(null)
       setUser(null)
       showSnackBar("Votre compte a été supprimé", "success")
@@ -86,7 +100,16 @@ export const useProfile = () => {
     setProfile((prev) => ({
       ...prev,
       [key]: value,
-    }))
+    }));
+
+    setProfileUpdate((prev) => ({
+      ...prev,
+      profile: {
+        ...prev?.profile,
+        [key]: value,
+      },
+    }));
+    
   }
 
   const handlePasswordChange = (key: keyof IPasswords, value: string) => {
@@ -96,10 +119,22 @@ export const useProfile = () => {
     }))
   }
 
+  const handleCurrentPasswordChange = (value: string) => {
+    setProfileUpdate((prev) => ({
+      ...prev,
+      current_password: value,
+    }));
+  };
+
   const handleSubmitProfile = () => {
+    if (!profileUpdate) {
+      showSnackBar("Les informations de profil sont manquantes", "error");
+      return;
+    }
+    
     setConfirmationModal({
       title: "Confirmez-vous les modifications de votre profil ?",
-      action: () => updateProfileMutation.mutate(profile),
+      action: () => updateProfileMutation.mutate(profileUpdate),
     })
   }
 
@@ -128,10 +163,10 @@ export const useProfile = () => {
   useEffect(() => {
     if (user) {
       setProfile({
-        // username: username,
         first_name: user.first_name,
-        last_name: user.lastName,
+        last_name: user.last_name,
         email: user.email,
+        is_superuser: user.is_superuser
       })
     }
   }, [user])
@@ -140,6 +175,7 @@ export const useProfile = () => {
     passwords,
     handleProfileChange,
     handlePasswordChange,
+    handleCurrentPasswordChange,
     handleSubmitProfile,
     handleSubmitPasswordChange,
     handleDeleteUserAccount,

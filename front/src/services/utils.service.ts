@@ -85,6 +85,5 @@ export const checkResponse = async (response: Response): Promise<unknown | void>
   if (!response.ok) {    
     throw new Error(data || "Une erreur est survenue")
   }
-
   return data
 }

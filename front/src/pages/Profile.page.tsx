@@ -11,7 +11,6 @@ import {
 import ConfirmationModal from "@components/ConfirmationModal"
 import { useProfile } from "@services/hooks/profile.hook"
 import { useAuthStore } from "@src/stores/auth.store"
-import { formatRoles } from "@src/services/roles.mapper.service"
 
 import {
   UserProfileCardSkeleton,
@@ -27,6 +26,7 @@ const Profile = () => {
     passwords,
     handleProfileChange,
     handlePasswordChange,
+    handleCurrentPasswordChange,
     handleSubmitProfile,
     handleSubmitPasswordChange,
     handleDeleteUserAccount,
@@ -47,14 +47,11 @@ const Profile = () => {
                 <Typography variant="h4" sx={{ marginTop: 2 }}>
                   {user?.first_name}
                 </Typography>
-                {/* <Typography variant="h5" sx={{ marginTop: 2 }}>
-                  {formatRoles(user.roles)}
-                </Typography> */}
                 <Button
                   variant="contained"
                   color="error"
                   sx={{ marginTop: 2 }}
-                  onClick={handleDeleteUserAccount}
+                  onClick={()=>handleDeleteUserAccount()}
                 >
                   Supprimer mon compte
                 </Button>
@@ -71,12 +68,6 @@ const Profile = () => {
                 <Typography variant="h6">
                   Mettre à jour les informations personnelles
                 </Typography>
-                {/* <CustomTextField
-                  label="Nom d'utilisateur"
-                  name="username"
-                  value={profile.username}
-                  onChange={(e) => handleProfileChange("username", e.target.value)}
-                /> */}
                 <CustomTextField
                   label="Prénom"
                   name="first_name"
@@ -85,7 +76,7 @@ const Profile = () => {
                 />
                 <CustomTextField
                   label="Nom"
-                  name="lastName"
+                  name="last_name"
                   value={profile.last_name}
                   onChange={(e) => handleProfileChange("last_name", e.target.value)}
                 />
@@ -94,6 +85,12 @@ const Profile = () => {
                   name="email"
                   value={profile.email}
                   onChange={(e) => handleProfileChange("email", e.target.value)}
+                />
+                <PasswordTextField
+                  label="Mot de passe"
+                  type="password"
+                  name="current_password"
+                  onChange={(e)=>handleCurrentPasswordChange(e.target.value)}
                 />
                 <Button
                   variant="contained"

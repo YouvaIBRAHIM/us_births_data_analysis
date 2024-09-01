@@ -74,7 +74,7 @@ export async function fetchRegister(
     },
     body: JSON.stringify({
       first_name: user.first_name,
-      last_name: user.lastName,
+      last_name: user.last_name,
       email: user.email,
       password: user.password
     }),
@@ -100,7 +100,7 @@ export async function fetchLogout(): Promise<Response> {
   if (!response.ok) {
     throw new Error("Network response was not ok")
   }
-
+  
   return response
 }
 
