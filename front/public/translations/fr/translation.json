@@ -10,5 +10,6 @@
     "ERROR_DATA_PROCESSING": "Erreur de traitement des données",
     "ERROR_DATAFRAME_PROCESSING": "Erreur de traitement du DataFrame",
     "ERROR_FILTER_APPLICATION": "Erreur d'application des filtres",
+    "ERROR_STATS_NOT_FOUND": "Aucune donnée trouvée",
     "UNAUTHORIZED": "Vous n'avez pas le droit d'accéder à cette API"
 }

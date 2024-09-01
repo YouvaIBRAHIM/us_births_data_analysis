@@ -233,19 +233,19 @@ export const options: IOption[] = [
     value: 'example-7',
     form: {
       title: 'Mesure de la diversité des prénoms',
-      chartType: 'heat',
+      chartType: 'bar',
       chartOrientation: 'v',
       indexes: ['years'],
       columns: ['names'],
       years: {
         type: 'period',
         field: 'years',
-        value: [1895,1906],
+        value: [1880,2018],
       },
       names: {
-        type: 'enum',
+        type: 'all',
         field: 'names',
-        value: ['John','Harry','Mary','Edward'],
+        value: [],
       },
       gender: {
         type: 'all',
@@ -254,7 +254,7 @@ export const options: IOption[] = [
       },
       conditions: [],
       aggregations: {
-        years: null,
+        years: 'count-names-per-year',
         names: null,
         gender: null,
         births: null,

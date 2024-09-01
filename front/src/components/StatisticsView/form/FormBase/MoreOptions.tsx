@@ -67,7 +67,7 @@ const MoreOptions = () => {
               />
             </Stack>
             <Stack flexDirection='row' gap={2}>
-              <CustomTextField value={form.limit} size="small" label="Limite de réponse" type="number" onChange={(e) => onSetLimit(e.target.value)}/>
+              <CustomTextField value={form.limit ?? ""} size="small" label="Limite de réponse" type="number" onChange={(e) => onSetLimit(e.target.value)}/>            
             </Stack>
           </Stack>
       </Stack>
