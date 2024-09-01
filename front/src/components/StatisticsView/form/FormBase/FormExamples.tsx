@@ -1,55 +1,8 @@
 import { Stack } from "@mui/material"
 import CustomSelect from "@src/components/Inputs/Select"
-import { clearForm, useFormStore } from "@src/components/StatisticsView/form/Form.store"
+import { useFormStore } from "@src/components/StatisticsView/form/Form.store"
 import { useState } from "react"
-import { IStatsForm } from "./FormBase.types"
-
-interface IOption{
-  label: string,
-  value: string,
-  form: IStatsForm
-}
-
-const options: IOption[] = [
-  {
-    label: 'Personnalisé',
-    value: 'custom',
-    form: clearForm
-  },
-  {
-    label: 'Mon formulaire exemple 1',
-    value: 'example-1',
-    form: {
-        title: 'Mon formulaire exemple 1',
-        indexes: ['years'],
-        columns: ['gender', 'births'],
-        years: {
-            type: "period",
-            field: "years",
-            value: [1880, 1881]
-        },
-        names: {
-            type: "all",
-            field: "names",
-            value: ['Manon', 'Miguel', 'Youva']
-        },
-        gender: {
-            type: "enum",
-            field: "gender",
-            value: ['F', 'M']
-        },
-        conditions: [],
-        aggregations: {
-          years: null,
-          names: null,
-          gender: null,
-          births: 'mean'
-        },
-        limit: null,
-        orderBy: null
-    }
-  }
-]
+import { options } from "./FormExamples.mock"
 
 const FormExamples = () => {
     const {onSetForm} = useFormStore()
