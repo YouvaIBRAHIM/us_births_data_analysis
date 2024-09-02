@@ -2,22 +2,36 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
-import { ArrowCounterClockwise, X } from '@phosphor-icons/react';
+import { ArrowCounterClockwise, Clipboard, ClipboardText, Stop, X } from '@phosphor-icons/react';
 import { Skeleton, Stack } from '@mui/material';
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { useState } from 'react';
 
 interface IDescriptionCard{
     title: string,
     onClose: () => void,
     onRetry: () => void,
+    onStop: () => void,
     messages: string[],
     isPending: boolean,
     hasFinishedStream: boolean,
 }
-const DescriptionCard = ({title, messages, onClose, onRetry, isPending, hasFinishedStream}: IDescriptionCard) => {
+const DescriptionCard = ({title, messages, onClose, onRetry, onStop, isPending, hasFinishedStream}: IDescriptionCard) => {
+    const [isCopied, setIsCopied] = useState<boolean>(false)
+
+    const onCopy = () => {
+        navigator.clipboard.writeText((messages && messages?.length) > 0 ? messages.join('') : '');
+        setIsCopied(true)
+
+        setTimeout(() => setIsCopied(false), 1500)
+    }
 
     return (
-        <Card>
+        <Card
+            sx={{
+                backgroundColor: "primary.light"
+            }}
+        >
             <CardHeader
                 action={
                     <Stack
@@ -26,8 +40,25 @@ const DescriptionCard = ({title, messages, onClose, onRetry, isPending, hasFinis
                     >
                         {
                             hasFinishedStream &&
+                            <>
+                                <IconButton aria-label="copy">
+                                    {
+                                        !isCopied 
+                                        ?
+                                        <Clipboard size={24} onClick={onCopy} />
+                                        :
+                                        <ClipboardText size={24} onClick={onCopy} />
+                                    }
+                                </IconButton>
+                                <IconButton aria-label="retry">
+                                    <ArrowCounterClockwise size={24} onClick={onRetry} />
+                                </IconButton>
+                            </>
+                        }
+                        {
+                            (messages && messages?.length) > 0 && !hasFinishedStream &&
                             <IconButton aria-label="retry">
-                                <ArrowCounterClockwise size={24} onClick={onRetry} />
+                                <Stop size={24} weight="fill" onClick={onStop} />
                             </IconButton>
                         }
                         

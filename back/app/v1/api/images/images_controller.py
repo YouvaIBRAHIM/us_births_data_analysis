@@ -17,13 +17,11 @@ router = APIRouter(prefix="/images", tags=["images"])
 @router.post("/generate-description")
 async def upload_image(
     request: Request,
-    # user=Depends(current_active_user)  # Activez ceci si vous voulez authentifier l'utilisateur
 ):
     try:
-        # Décoder l'image depuis la base64 (décommenter si nécessaire)
         payload = await request.json()
         image_data = payload.get("image", None)
-        form = payload.get("form", {})
+        form = payload.get("form", "")
 
         if image_data:
             tasks = []
@@ -38,21 +36,23 @@ async def upload_image(
         print(f"Erreur : {e}")
         return JSONResponse(content="INTERNAL_SERVER_ERROR", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @router.websocket("/description/stream")
-async def websocket_endpoint(
-    websocket: WebSocket,
-    # user=Depends(current_active_user) 
-):
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     clients.append(websocket)
+    stop_streaming = False
+
     try:
-        while True:
-            
+        while not stop_streaming:
             data = await websocket.receive_text()
-            print(f"Message reçu de sdfdsfxcv : {data}")
-    except WebSocketDisconnect as e:
-        print(e)
-        print(f"Client déconnecté : sdfdsfxcv")
+            if data == "STOP_STREAM":
+                stop_streaming = True
+                await websocket.send_text("END_OF_STREAM")
+
+    except WebSocketDisconnect:
+        print("Client déconnecté")
     except Exception as e:
-        print(e)
-        print(f"Client déconnecté : sdfdsfxcv")
+        print(f"Erreur : {e}")
+    finally:
+        clients.remove(websocket)

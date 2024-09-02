@@ -3,37 +3,20 @@ import DescriptionCard from '@src/components/Description/DescriptionCard';
 import Graphics from '@src/components/StatisticsView/Graphics/Graphics';
 import StatsListView from '@src/components/StatisticsView/StatsListView';
 import Form from '@src/components/StatisticsView/form/Form';
-import { useFormStore } from '@src/components/StatisticsView/form/Form.store';
-import { useDescribeImage } from '@src/services/hooks/describeComponent.hook';
-import { useEffect, useState } from 'react';
+import useHomeHook from '@src/services/hooks/home.hook';
+
 export default function Home() {
-    const { result, form } = useFormStore()
-    const { 
-        ref, 
-        convertToImageAndDescribe, 
+    const {
+        ref,
         messages, 
         isSendingImage,
+        showDescriptionCard,
         hasFinishedStream,
-        stopStream 
-    } = useDescribeImage()
-    const [showDescriptionCard, setShowDescriptionCard] = useState(false)
-
-    useEffect(() => {
-        if (form.generateReport && result) {
-            console.log("generate report...");
-            
-            convertToImageAndDescribe()
-            setShowDescriptionCard(true)
-        }
-    }, [result, form.generateReport])
-
-    const stopCurrentStream = () => {
-        if (!hasFinishedStream) {
-            stopStream()
-        }
-        setShowDescriptionCard(false)
-    }
-
+        stopCurrentStreamAndClose,
+        stopCurrentStream,
+        convertToImageAndDescribe
+    } = useHomeHook()
+    
     return (    
     <Grid container spacing={4}>
         <Grid item xs={12}>
@@ -50,7 +33,7 @@ export default function Home() {
             </Stack>
         </Grid>
         {
-            result && (
+            showDescriptionCard && (
                 <Grid 
                     item 
                     xs={12}
@@ -60,7 +43,8 @@ export default function Home() {
                 >
                     <Paper elevation={5}>
                         <DescriptionCard 
-                            onClose={stopCurrentStream}
+                            onClose={stopCurrentStreamAndClose}
+                            onStop={stopCurrentStream}
                             onRetry={convertToImageAndDescribe}
                             title={(isSendingImage || !messages || messages.length == 0) ? "Analyse des données en cours..." : "Analyse des données"} 
                             messages={messages} 

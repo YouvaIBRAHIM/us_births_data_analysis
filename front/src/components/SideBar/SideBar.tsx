@@ -22,14 +22,7 @@ const sideBarList: ISideBarListItem[] = [
     icon: <ChartBar size={24} />,
     link: "/graphics",
     roles: ["all"],
-  },
-  {
-    id: "admin",
-    label: "Administration",
-    icon: <Kanban size={24} />,
-    link: "/admin",
-    roles: ["all"],
-  },
+  }
 ]
 
 const SideBar = () => {
