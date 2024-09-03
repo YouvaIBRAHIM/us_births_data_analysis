@@ -2,6 +2,7 @@ import { ICondition } from "@src/components/Conditions/Conditions.types";
 
 export interface IStatsForm{
     title: string;
+    generateReport: boolean;
     chartType: string | null,
     chartOrientation: 'v' | 'h',
     indexes: IStatsFormFields['fields'][]

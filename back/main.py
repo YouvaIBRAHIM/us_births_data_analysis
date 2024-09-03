@@ -10,7 +10,10 @@ from fastapi.responses import JSONResponse
 load_dotenv()
 app = FastAPI()
 
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+
 cors_origins_env = os.environ.get('CORS_ORIGINS')
+
 if not cors_origins_env:
     raise ValueError("CORS_ORIGINS var env is not set")
 

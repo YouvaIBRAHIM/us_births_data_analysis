@@ -33,6 +33,7 @@ const StatsListView = () => {
 
     link.click();
   }
+  
   return (
     <Box sx={{ width: "100%" }}>
       {
