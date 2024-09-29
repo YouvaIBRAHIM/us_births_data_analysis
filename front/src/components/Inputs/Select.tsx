@@ -1,4 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Tooltip } from "@mui/material";
+import { Info } from "@phosphor-icons/react";
 
 interface CustomSelectProps {
     id: string;
@@ -8,47 +9,62 @@ interface CustomSelectProps {
     options: { value: string | null; label: string }[];
     disabledOption?: string;
     disabled?: boolean;
-    error?: boolean
+    error?: boolean,
+    description?: string
 }
 
-const CustomSelect = ({ id, label, value, onChange, options, disabledOption, disabled, error }: CustomSelectProps) => {
+const CustomSelect = ({ id, label, value, onChange, options, disabledOption, disabled, error, description }: CustomSelectProps) => {
     const handleChange = (event: SelectChangeEvent<string>) => {
         onChange(event.target.value as string);
     };
 
     return (
-        <FormControl 
-            size="small"
-            sx={{
-                flexBasis: {
-                    xs: "100%",
-                    sm: "20%",
-                },
-                width: {
-                    xs: "100%",
-                },
-                flexGrow: 1,
-                minWidth: 150
-            }}
+        <Stack
+            gap={1}
+            flexWrap="nowrap"
+            flexDirection="row"
+            alignItems="center"
+            flexGrow={1}
         >
-            <InputLabel id={id}>{label}</InputLabel>
-            <Select
-            fullWidth
-            labelId={id}
-            id={id}
-            label={label}
-            value={value as string | undefined}
-            onChange={handleChange}
-            error={error}
-            disabled={disabled}
+            <FormControl 
+                size="small"
+                sx={{
+                    flexBasis: {
+                        xs: "100%",
+                        sm: "20%",
+                    },
+                    width: {
+                        xs: "100%",
+                    },
+                    flexGrow: 1,
+                    minWidth: 150
+                }}
             >
+                <InputLabel id={id}>{label}</InputLabel>
+                <Select
+                fullWidth
+                labelId={id}
+                id={id}
+                label={label}
+                value={value as string | undefined}
+                onChange={handleChange}
+                error={error}
+                disabled={disabled}
+                >
+                {
+                    options.filter(opt => opt.value !== disabledOption).map((opt, i) => (
+                    <MenuItem key={i} value={opt.value as string | undefined}>{opt.label}</MenuItem>
+                    ))
+                }
+                </Select>
+            </FormControl>
             {
-                options.filter(opt => opt.value !== disabledOption).map((opt, i) => (
-                <MenuItem key={i} value={opt.value as string | undefined}>{opt.label}</MenuItem>
-                ))
+                description &&
+                <Tooltip title={description}>
+                    <Info size={24} />
+                </Tooltip>
             }
-            </Select>
-        </FormControl>
+        </Stack>
         );
 };
 

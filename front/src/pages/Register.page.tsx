@@ -42,7 +42,6 @@ const RegisterPage: React.FC = () => {
           </Typography>
           <Stack
             flexDirection="column"
-            gap={1}
             width="100%"
           >
             <CustomTextField

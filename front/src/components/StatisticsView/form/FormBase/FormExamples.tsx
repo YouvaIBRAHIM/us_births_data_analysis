@@ -1,11 +1,13 @@
-import { Stack } from "@mui/material"
+import { Chip, Stack } from "@mui/material"
 import CustomSelect from "@src/components/Inputs/Select"
 import { useFormStore } from "@src/components/StatisticsView/form/Form.store"
 import { useState } from "react"
 import { options } from "./FormExamples.mock"
+import ArrowTooltips from "@src/components/ArrowTooltips"
+import { Info } from "@phosphor-icons/react"
 
 const FormExamples = () => {
-    const {onSetForm} = useFormStore()
+    const {onSetForm, form} = useFormStore()
     const [ selectedExample, setSelectedExample ] = useState<string>('custom')
 
     const onSetSelectedExample = (val: string) => {
@@ -19,7 +21,11 @@ const FormExamples = () => {
     }
 
     return (
-      <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
+      <Stack 
+        direction="column" 
+        gap={1}
+        width="100%"
+      >
         <CustomSelect
           id="forms"
           label="Formulaires"
@@ -27,6 +33,14 @@ const FormExamples = () => {
           onChange={onSetSelectedExample}
           options={options}
         />
+        {
+          form.description &&
+          <ArrowTooltips
+              title={form.description}
+          >
+              <Chip  avatar={<Info size={24}/>} label={form.description} />
+          </ArrowTooltips>
+        }
       </Stack>
     )
 }

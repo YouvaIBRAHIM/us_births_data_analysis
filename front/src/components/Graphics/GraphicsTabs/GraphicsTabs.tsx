@@ -51,7 +51,7 @@ export const graphicsList: IGraphicsTabsItem[] = [
   },
   {
     id: "heat",
-    label: "Graphique thermique",
+    label: "Heatmap",
     icon: <SquaresFour size={24} />,
     options: {
       type: 'heat',
@@ -98,7 +98,7 @@ const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
           variant="scrollable"
           scrollButtons
           allowScrollButtonsMobile
-          sx={(theme) => ({
+          sx={{
             "& .MuiTabs-flexContainer": {
               justifyContent: 'space-around'
             },
@@ -107,9 +107,9 @@ const GraphicsTabs = ({selectedButtonId, onHandleClick}: IGraphicsTabs) => {
             },
             "& .Mui-selected":{
               borderBottom: '2px solid',
-              color: theme.palette.secondary.main
             }
-          })}
+          }}
+          textColor="secondary"
         >
         {
           graphicsList.map((button, i) => (

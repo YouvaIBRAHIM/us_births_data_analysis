@@ -20,6 +20,8 @@ export const options: IOption[] = [
     value: 'example-1',
     form: {
       title: 'Exploration initiale',
+      description: 'Calcul du nombre de naissances par sexe pour une année donnée et concaténation des données de toutes les années pour créer un ensemble complet.',
+      generateReport: false,
       chartType: "bar",
       chartOrientation: 'v',
       indexes: ['years'],
@@ -55,6 +57,8 @@ export const options: IOption[] = [
     value: 'example-2',
     form: {
       title: 'Agrégation des données',
+      description: 'Création de tableaux pivots pour représenter les naissances par année et par sexe.',
+      generateReport: false,
       chartType: "line",
       chartOrientation: 'v',
       indexes: ['years'],
@@ -90,6 +94,8 @@ export const options: IOption[] = [
     value: 'example-3',
     form: {
       title: 'Visualisation des naissances',
+      description: 'Représentation graphique du nombre de naissances par année.',
+      generateReport: false,
       chartType: "line",
       chartOrientation: 'v',
       indexes: ['years'],
@@ -125,6 +131,8 @@ export const options: IOption[] = [
     value: 'example-4',
     form: {
       title: 'Calcul des proportions',
+      description: 'Ajout d\'une colonne pour la proportion des naissances par prénom, sexe et année, et vérification de la somme des proportions pour chaque groupe.',
+      generateReport: false,
       chartType: null,
       chartOrientation: 'h',
       indexes: ['names','years'],
@@ -160,6 +168,8 @@ export const options: IOption[] = [
     value: 'example-5',
     form: {
       title: 'Extraction des sous-ensembles',
+      description: 'Extraction de sous-ensembles de 1000 prénoms les plus populaires par groupe avec une fonction spécifique.',
+      generateReport: false,
       chartType: null,
       chartOrientation: 'h',
       indexes: ['names'],
@@ -198,6 +208,8 @@ export const options: IOption[] = [
     value: 'example-6',
     form: {
       title: 'Étude de tendances',
+      description: 'Analyse et représentation graphique des tendances de prénoms spécifiques comme "John" et "Harry".',
+      generateReport: false,
       chartType: 'heat',
       chartOrientation: 'v',
       indexes: ['years'],
@@ -233,6 +245,8 @@ export const options: IOption[] = [
     value: 'example-7',
     form: {
       title: 'Mesure de la diversité des prénoms',
+      description: 'Évaluation de la diversité des prénoms au fil du temps.',
+      generateReport: false,
       chartType: 'bar',
       chartOrientation: 'v',
       indexes: ['years'],
@@ -268,6 +282,8 @@ export const options: IOption[] = [
     value: 'example-8',
     form: {
       title: 'Analyse par décennie',
+      description: 'Regroupement et analyse des tendances des prénoms par décennie.',
+      generateReport: false,
       chartType: 'pie',
       chartOrientation: 'v',
       indexes: ['years'],
@@ -303,6 +319,8 @@ export const options: IOption[] = [
     value: 'example-9',
     form: {
       title: 'Longueur des prénoms',
+      description: 'Analyse des tendances liées à la longueur des prénoms.',
+      generateReport: false,
       chartType: 'bar',
       chartOrientation: 'v',
       indexes: ['names'],
@@ -338,6 +356,8 @@ export const options: IOption[] = [
     value: 'example-10',
     form: {
       title: 'Noms composés',
+      description: 'Étude de l\'évolution de l\'utilisation des noms composés.',
+      generateReport: false,
       chartType: null,
       chartOrientation: 'v',
       indexes: ['names'],
@@ -373,6 +393,8 @@ export const options: IOption[] = [
     value: 'example-11',
     form: {
       title: 'Tableau pivot par prénom et année',
+      description: 'Création d\'une table pivot des naissances par prénom et par année.',
+      generateReport: false,
       chartType: "line",
       chartOrientation: 'v',
       indexes: ['years', 'names'],

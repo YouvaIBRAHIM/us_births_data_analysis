@@ -55,7 +55,7 @@ export const graphicsList: IGraphicsTabsItem[] = [
   },
   {
     id: "heat",
-    label: "Graphique thermique",
+    label: "Heatmap",
     icon: <SquaresFour size={24} />,
     options: {
       type: 'heat',

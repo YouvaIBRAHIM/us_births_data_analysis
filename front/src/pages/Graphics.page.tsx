@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material';
+import { Alert, Grid, Paper } from '@mui/material';
 import { Stack } from '@mui/system';
 import Graphics from '@src/components/Graphics/Graphics';
 import GraphicFormBase from '@src/components/Graphics/GraphicsForm/GraphicsForm';
@@ -12,38 +12,46 @@ export default function GraphicsPage() {
         onSelectedButtonId
     } = useGraphics()
     
-    return (    
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Paper 
-                    sx={{
-                        padding: 2
-                    }}
-                >
-                    <GraphicFormBase selectedGraphicId={selectedButtonId} />
-                </Paper>
-            </Grid>
-            <Grid item xs={12}>
-                <SelectGraphics selectedButtonId={selectedButtonId} onHandleClick={onSelectedButtonId} />
-            </Grid>
-            <Grid item xs={12}>
-                <Paper 
-                    sx={{
-                        padding: 2
-                    }}
-                >
-                    <Stack 
-                        flexDirection="column"
-                        justifyContent="center"
-                        alignItems="center"
+    return (   
+        <Stack
+            direction="column"
+            gap={1}
+        >
+            <Alert variant="filled" severity="warning">
+                Cette fonctionnalité est une version Beta. 
+            </Alert>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Paper 
                         sx={{
-                            minHeight: 400
+                            padding: 2
                         }}
                     >
-                        <Graphics selectedGraphicId={selectedButtonId} />         
-                    </Stack>       
-                </Paper>
+                        <GraphicFormBase selectedGraphicId={selectedButtonId} />
+                    </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                    <SelectGraphics selectedButtonId={selectedButtonId} onHandleClick={onSelectedButtonId} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Paper 
+                        sx={{
+                            padding: 2
+                        }}
+                    >
+                        <Stack 
+                            flexDirection="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{
+                                minHeight: 400
+                            }}
+                        >
+                            <Graphics selectedGraphicId={selectedButtonId} />         
+                        </Stack>       
+                    </Paper>
+                </Grid>
             </Grid>
-        </Grid>
+        </Stack>
     )
 }

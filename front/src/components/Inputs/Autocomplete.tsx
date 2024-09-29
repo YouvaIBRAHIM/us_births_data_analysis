@@ -1,8 +1,9 @@
 import { SyntheticEvent } from "react"
 
-import { Autocomplete } from "@mui/material"
+import { Autocomplete, Stack, Tooltip } from "@mui/material"
 import CustomTextField from "./TextField"
 import { useSnackBarStore } from "@src/stores/snackbar.store";
+import { Info } from "@phosphor-icons/react";
 
 
 export interface IAutocompleteValue {
@@ -16,7 +17,8 @@ interface IAutocomplete {
     options: IAutocompleteValue[];
     onChange: (value: string[]) => void;
     maxValues?: number;
-    id?: string
+    id?: string,
+    description?: string
 }
 
 const CustomAutocomplete = ({
@@ -26,6 +28,7 @@ const CustomAutocomplete = ({
     onChange,
     maxValues,
     id,
+    description
 }: IAutocomplete) => {
     const { showSnackBar } = useSnackBarStore()
 
@@ -41,30 +44,44 @@ const CustomAutocomplete = ({
     }
 
     return (
-        <Autocomplete
-            size="small"
-            sx={{
-                my: 2,
-                flexBasis: {
-                    xs: "100%",
-                    sm: "20%",
-                },
-                width: {
-                    xs: "100%",
-                },
-                flexGrow: 1
+        <Stack
+            gap={1}
+            flexWrap="nowrap"
+            flexDirection="row"
+            alignItems="center"
+            flexGrow={1}
+        >
+            <Autocomplete
+                size="small"
+                sx={{
+                    my: 2,
+                    flexBasis: {
+                        xs: "100%",
+                        sm: "20%",
+                    },
+                    width: {
+                        xs: "100%",
+                    },
+                    flexGrow: 1
 
-            }}
-            multiple
-            disablePortal
-            id={id ?? "autocompleteId"}
-            options={options}
-            value={options.filter((el) =>
-                values.includes(el.value),
-            )}
-            onChange={onHandleChange}
-            renderInput={(params) => <CustomTextField {...params} label={label} />}
-        />
+                }}
+                multiple
+                disablePortal
+                id={id ?? "autocompleteId"}
+                options={options}
+                value={options.filter((el) =>
+                    values.includes(el.value),
+                )}
+                onChange={onHandleChange}
+                renderInput={(params) => <CustomTextField {...params} label={label} margin="none"/>}
+            />
+            {
+                description &&
+                <Tooltip title={description}>
+                    <Info size={24} />
+                </Tooltip>
+            }
+        </Stack>
     )
 }
 
