@@ -70,6 +70,7 @@ const ConditionBuilder = ({fieldOptions, conditions, onSetConditions}: IConditio
                         <Grid item xs={4}>
                             <CustomTextField
                                 size="small"
+                                margin="none"
                                 fullWidth
                                 value={condition.value}
                                 onChange={(e) => handleConditionChange(index, 'value', e.target.value)}

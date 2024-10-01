@@ -1,8 +1,9 @@
-import { Divider, Stack } from "@mui/material"
+import { Divider, Stack, Tooltip } from "@mui/material"
 import CustomSelect from "@src/components/Inputs/Select"
 import { useFormStore } from "@src/components/StatisticsView/form/Form.store"
 import { options } from "./FormBase";
 import CustomTextField from "@src/components/Inputs/TextField";
+import { Info } from "@phosphor-icons/react";
 
 interface IOption{
   label: string,
@@ -56,6 +57,7 @@ const MoreOptions = () => {
                 value={form.orderBy?.field ?? null}
                 onChange={(val) => onSetOrderBy(val)}
                 options={[{label: 'Non ordonné', value: null},...options]}
+                description="Permet d'ordonner les données sur la Dataframe. Attention ! Si vous avez sélectionné des éléments dans le champs Colonnes, le trie risque de ne pas être appliqué."
               />
               <CustomSelect
                 id="order"
@@ -66,8 +68,11 @@ const MoreOptions = () => {
                 disabled={form.orderBy?.field ? false : true}
               />
             </Stack>
-            <Stack flexDirection='row' gap={2}>
-              <CustomTextField value={form.limit ?? ""} size="small" label="Limite de réponse" type="number" onChange={(e) => onSetLimit(e.target.value)}/>            
+            <Stack flexDirection='row' gap={1} alignItems="center">
+              <CustomTextField value={form.limit ?? ""} size="small" label="Limite de réponse" type="number" onChange={(e) => onSetLimit(e.target.value)}  margin="none"/>
+              <Tooltip title={"Applique une limite de lignes sur la Dataframe."}>
+                <Info size={24} />
+              </Tooltip>
             </Stack>
           </Stack>
       </Stack>

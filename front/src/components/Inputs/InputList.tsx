@@ -26,6 +26,7 @@ export default function InputList({values, onAddValue, onRemoveValue, label}: II
             <Grid item xs={12} sm={6}>
                 <CustomTextField
                     label={label}
+                    margin="none"
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">

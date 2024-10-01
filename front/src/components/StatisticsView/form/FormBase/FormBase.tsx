@@ -5,6 +5,7 @@ import { IStatsFormFields } from "./FormBase.types";
 import CustomAutocomplete, { IAutocompleteValue } from "@src/components/Inputs/Autocomplete";
 import FormAggregations from "./FormAggregations";
 import MoreOptions from "./MoreOptions";
+import CustomPaper from "@src/components/CustomPaper";
 
 
 export const options: IAutocompleteValue[] = [
@@ -48,6 +49,7 @@ const FormBase = () => {
             label="Indexes"
             id="indexes"
             maxValues={2}
+            description="En séléctionnant un ou deux index, vous générez implicitement une table pivot."
           />
           <CustomAutocomplete
             options={options.filter(opt => !form.indexes.includes(opt.value as IStatsFormFields['fields']))}
@@ -56,11 +58,14 @@ const FormBase = () => {
             label="Colonnes"
             id="columns"
             maxValues={3}
+            description='Les colonnes contiendront les différrentes valeurs des élements sélectionnées. Exemple : Si vous sélectionnez la colonne "Genre", vous aurez les colonnes "H" et "F".'
           />
         </Stack>
         <FormAggregations />
         <RefineOptions />
-        <MoreOptions />
+        <CustomPaper>
+          <MoreOptions />
+        </CustomPaper>
       </Stack>
     )
 }

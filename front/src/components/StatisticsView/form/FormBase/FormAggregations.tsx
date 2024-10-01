@@ -131,6 +131,7 @@ const FormAggregations = () => {
                         value={form.aggregations[index]}
                         onChange={(val) => onSetSelectedExample(val, index)}
                         options={indexOptions[index] ?? []}
+                        description={"Vous pouvez appliquer l'une des fonctions listées sur l'index " + getLabel(index)}
                       />
                     </Stack>
                   )
@@ -163,6 +164,7 @@ const FormAggregations = () => {
                         value={form.aggregations[col]}
                         onChange={(val) => onSetSelectedExample(val, col)}
                         options={colOptions[col] ?? []}
+                        description={"Vous pouvez appliquer l'une des fonctions listées sur la colonne " + getLabel(col)}
                       />
                     </Stack>
                   )

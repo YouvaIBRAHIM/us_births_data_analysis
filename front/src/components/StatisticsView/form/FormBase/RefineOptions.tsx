@@ -1,11 +1,15 @@
 import CustomSlider from "@src/components/Inputs/Slider";
 import CustomSelect from "@components/Inputs/Select";
 import { useFormStore } from "@components/StatisticsView/form/Form.store";
-import { Divider, Paper, Stack } from "@mui/material";
+import { Chip, Divider, Stack } from "@mui/material";
 import InputList from "@components/Inputs/InputList";
 import { options } from "./FormBase";
 import { IStatsFormFields } from "./FormBase.types";
+import { Info } from "@phosphor-icons/react";
+import ArrowTooltips from "@src/components/ArrowTooltips";
+import CustomPaper from "@src/components/CustomPaper";
 
+const INFO = "Ce paramètre est appliquer sur la requête SQL avant que les données soient traitées dans la Dataframe. Permet de gagner en temps de traitement."
 
 const yearsOptions = [
     {
@@ -114,23 +118,22 @@ const RefineOptions = () => {
                         value={form[field].type}
                         onChange={onChangeSelect}
                         options={field === "years" ? yearsOptions : fieldOptions}
-                    />
-                </>
+                    />                </>
             )
         }
 
         return (
-            <Paper
-                elevation={3}
-                sx={{
-                    p: 2
-                }}
-            >
+            <CustomPaper>
                 <Stack flexDirection="column" gap={2} width="100%">
                     {getSelect()}
                     {renderOptions()}
+                    <ArrowTooltips
+                        title={INFO}
+                    >
+                        <Chip  avatar={<Info size={24}/>} label={INFO} />
+                    </ArrowTooltips>
                 </Stack>
-            </Paper>
+            </CustomPaper>
         )
     }
 
